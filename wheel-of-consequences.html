@@ -514,10 +514,27 @@ h1, h2 {
         function preloadAudio() {
             tickSound.load();
             winSound.load();
+            
+            // Set volume and other properties
+            tickSound.volume = 0.5;
+            winSound.volume = 0.7;
+            
+            // Enable audio context
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioContext = new AudioContext();
+            
+            // Resume audio context on user interaction
+            document.addEventListener('click', function resumeAudioContext() {
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                document.removeEventListener('click', resumeAudioContext);
+            }, { once: true });
         }
         
         // Initialize audio on first user interaction
         function initAudio() {
+            preloadAudio();
             const playPromise = tickSound.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
@@ -754,13 +771,21 @@ h1, h2 {
                 } else {
                     // Spin complete
                     stopTicking();
-                    winSound.currentTime = 0;
-                    const playPromise = winSound.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(() => {
-                            // Auto-play was prevented, but that's okay
-                        });
-                    }
+                    
+                    // Play win sound with a small delay to ensure clean audio context
+                    setTimeout(() => {
+                        winSound.currentTime = 0;
+                        const playPromise = winSound.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(() => {
+                                // If auto-play fails, try to play on next user interaction
+                                document.addEventListener('click', function playWinSoundOnce() {
+                                    winSound.play().catch(() => {});
+                                    document.removeEventListener('click', playWinSoundOnce);
+                                }, { once: true });
+                            });
+                        }
+                    }, 100);
 
                     // Calculate winner
                     const finalAngle = (currentRotation % (Math.PI * 2));
