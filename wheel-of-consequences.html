@@ -510,15 +510,50 @@ h1, h2 {
         const tickSound = document.getElementById('tickSound');
         const winSound = document.getElementById('winSound');
     
+        // Preload audio files
+        function preloadAudio() {
+            tickSound.load();
+            winSound.load();
+        }
+        
+        // Initialize audio on first user interaction
+        function initAudio() {
+            const playPromise = tickSound.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    tickSound.pause();
+                    tickSound.currentTime = 0;
+                }).catch(() => {
+                    // Auto-play was prevented, but that's okay
+                });
+            }
+        }
+        
+        // Add click handler to document for audio initialization
+        document.addEventListener('click', function initAudioOnce() {
+            initAudio();
+            document.removeEventListener('click', initAudioOnce);
+        }, { once: true });
+        
         let tickInterval = null;
     
         function startTicking() {
             stopTicking();
             tickSound.currentTime = 0;
-            tickSound.play().catch(() => {});
+            const playPromise = tickSound.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // Auto-play was prevented, but that's okay
+                });
+            }
             tickInterval = setInterval(() => {
                 tickSound.currentTime = 0;
-                tickSound.play().catch(() => {});
+                const playPromise = tickSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // Auto-play was prevented, but that's okay
+                    });
+                }
             }, 175);
         }
     
@@ -720,7 +755,12 @@ h1, h2 {
                     // Spin complete
                     stopTicking();
                     winSound.currentTime = 0;
-                    winSound.play().catch(() => {});
+                    const playPromise = winSound.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {
+                            // Auto-play was prevented, but that's okay
+                        });
+                    }
 
                     // Calculate winner
                     const finalAngle = (currentRotation % (Math.PI * 2));
