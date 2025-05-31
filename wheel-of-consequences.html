@@ -491,7 +491,7 @@ h1, h2 {
 
     <!-- Add audio elements -->
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
-    <audio id="winSound" preload="auto" src="consequence.mp3"></audio>
+    <audio id="winSound" preload="auto" src="consequence.mp3" type="audio/mpeg"></audio>
 
     <!-- Add confetti library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -517,7 +517,7 @@ h1, h2 {
             
             // Set volume and other properties
             tickSound.volume = 0.5;
-            winSound.volume = 0.7;
+            winSound.volume = 1.0; // Full volume for consequence sound
             
             // Enable audio context
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -772,16 +772,16 @@ h1, h2 {
                     // Spin complete
                     stopTicking();
                     
-                    // Play win sound with a small delay to ensure clean audio context
+                    // Play consequence sound with a small delay to ensure clean audio context
                     setTimeout(() => {
                         winSound.currentTime = 0;
                         const playPromise = winSound.play();
                         if (playPromise !== undefined) {
                             playPromise.catch(() => {
                                 // If auto-play fails, try to play on next user interaction
-                                document.addEventListener('click', function playWinSoundOnce() {
+                                document.addEventListener('click', function playConsequenceSoundOnce() {
                                     winSound.play().catch(() => {});
-                                    document.removeEventListener('click', playWinSoundOnce);
+                                    document.removeEventListener('click', playConsequenceSoundOnce);
                                 }, { once: true });
                             });
                         }
