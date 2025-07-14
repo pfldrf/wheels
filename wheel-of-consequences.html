@@ -1160,11 +1160,18 @@ h1, h2 {
             
             function startTicking() {
                 stopTicking();
+                
+                // Temporarily lower music volume for tick sounds
+                if (!introSound.paused) {
+                    introSound.volume = 0.15;
+                }
+                
                 tickSound.currentTime = 0;
-                tickSound.play().catch(() => {});
+                tickSound.play().catch(e => console.log('Tick sound failed:', e));
+                
                 tickInterval = setInterval(() => {
                     tickSound.currentTime = 0;
-                    tickSound.play().catch(() => {});
+                    tickSound.play().catch(e => console.log('Tick sound failed:', e));
                 }, 175);
             }
             
@@ -1175,6 +1182,11 @@ h1, h2 {
                 }
                 tickSound.pause();
                 tickSound.currentTime = 0;
+                
+                // Restore music volume after ticking stops
+                if (!introSound.paused) {
+                    introSound.volume = 0.3;
+                }
             }
             
             function drawWheel(rotation = 0) {
@@ -1454,6 +1466,13 @@ h1, h2 {
                         // Dramatic celebration effects
                         setTimeout(() => {
                             dramaticConfetti();
+                            // Temporarily duck music for consequence sound
+                            if (!introSound.paused) {
+                                introSound.volume = 0.1;
+                                setTimeout(() => {
+                                    if (!introSound.paused) introSound.volume = 0.3;
+                                }, 2000);
+                            }
                             consequenceSound.play().catch(() => {});
                             
                             // Add dramatic explosion and lightning
@@ -1574,13 +1593,15 @@ h1, h2 {
             stopTimerBtn.addEventListener('click', stopTimer);
             resetTimerBtn.addEventListener('click', resetTimer);
             
-            // === INTRO MUSIC FUNCTIONALITY ===
+            // === ENHANCED AUDIO SYSTEM ===
             let audioContextUnlocked = false;
             let introMusicPlayed = false;
             
-            // Set up intro music
-            introSound.volume = 0.7;
+            // Set up audio volumes - effects over music
+            introSound.volume = 0.3; // Lower music volume so effects can be heard
             introSound.loop = false;
+            tickSound.volume = 0.8; // Higher volume for tick sound
+            consequenceSound.volume = 0.9; // High volume for result sound
             
             // Loading screen management with interactive ready state
             function showReadyState() {
