@@ -372,6 +372,9 @@ h1, h2 {
     width: 400px;
     height: 400px;
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .pointer {
@@ -401,6 +404,9 @@ h1, h2 {
     border-radius: 50%;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 
 [data-theme="spooky"] #wheelCanvas {
@@ -783,6 +789,22 @@ h1, h2 {
         height: 300px;
     }
     
+    #wheelCanvas {
+        width: 300px !important;
+        height: 300px !important;
+    }
+    
+    .pointer {
+        top: -12px;
+        font-size: 24px;
+    }
+    
+    #spinBtn {
+        padding: 12px 24px;
+        font-size: 16px;
+        bottom: -50px;
+    }
+    
     .controls {
         min-width: unset;
         width: 100%;
@@ -1066,6 +1088,34 @@ h1, h2 {
             // === ENHANCED WHEEL SYSTEM ===
             const canvas = document.getElementById('wheelCanvas');
             const ctx = canvas.getContext('2d');
+            
+            // Make canvas responsive
+            function resizeCanvas() {
+                const container = document.querySelector('.wheel-container');
+                const containerWidth = container.offsetWidth;
+                const containerHeight = container.offsetHeight;
+                const size = Math.min(containerWidth, containerHeight);
+                
+                if (window.innerWidth <= 768) {
+                    canvas.width = 300;
+                    canvas.height = 300;
+                    canvas.style.width = '300px';
+                    canvas.style.height = '300px';
+                } else {
+                    canvas.width = 400;
+                    canvas.height = 400;
+                    canvas.style.width = '400px';
+                    canvas.style.height = '400px';
+                }
+                
+                drawWheel(currentRotation);
+            }
+            
+            // Initial resize and window resize listener
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('orientationchange', () => {
+                setTimeout(resizeCanvas, 100);
+            });
             const spinBtn = document.getElementById('spinBtn');
             const optionInput = document.getElementById('optionInput');
             const addOptionBtn = document.getElementById('addOptionBtn');
@@ -1379,10 +1429,12 @@ h1, h2 {
                         clearInterval(particleInterval);
                         stopTicking();
                         
-                        // Determine consequence
+                        // Determine consequence - Fixed pointer accuracy
                         const normalizedRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
                         const segmentAngle = (2 * Math.PI) / options.length;
-                        const winningIndex = Math.floor((2 * Math.PI - normalizedRotation + segmentAngle / 2) / segmentAngle) % options.length;
+                        // Adjust for pointer being at top (π/2 offset) and correct the calculation
+                        const adjustedRotation = (normalizedRotation + Math.PI/2) % (2 * Math.PI);
+                        const winningIndex = Math.floor(adjustedRotation / segmentAngle) % options.length;
                         const consequence = options[winningIndex];
                         
                         // Update statistics and history
@@ -1605,6 +1657,7 @@ h1, h2 {
             
             // === INITIAL SETUP ===
             updateOptionsList();
+            resizeCanvas();
             drawWheel();
         });
     </script>
