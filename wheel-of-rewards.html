@@ -4,10 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheel of Rewards</title>
-    <link rel="stylesheet" href="style.css">
+
 </head>
 <style>
-/* Add dark mode styles */
+/* Loading Screen Styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+    cursor: pointer;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loading-text {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.loading-subtext {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.loading-ready {
+    background: linear-gradient(45deg, #28a745 0%, #20c997 100%) !important;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.main-content {
+    opacity: 1;
+}
+
+/* Enhanced Visual Themes */
 :root {
     --bg-color: #f4f4f4;
     --container-bg: #fff;
@@ -20,6 +87,9 @@
     --scrollbar-track: #f1f1f1;
     --scrollbar-thumb: #888;
     --scrollbar-thumb-hover: #555;
+    --primary-color: #2ecc71;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
 }
 
 [data-theme="dark"] {
@@ -34,19 +104,131 @@
     --scrollbar-track: #2d2d2d;
     --scrollbar-thumb: #666;
     --scrollbar-thumb-hover: #888;
+    --primary-color: #27ae60;
+    --secondary-color: #2980b9;
+    --accent-color: #c0392b;
+}
+
+[data-theme="neon"] {
+    --bg-color: #0a0a0a;
+    --container-bg: #1a1a2e;
+    --text-color: #00ffff;
+    --border-color: #ff00ff;
+    --input-bg: #16213e;
+    --input-border: #00ffff;
+    --list-bg: #16213e;
+    --list-hover: #252554;
+    --scrollbar-track: #16213e;
+    --scrollbar-thumb: #00ffff;
+    --scrollbar-thumb-hover: #ff00ff;
+    --primary-color: #00ffff;
+    --secondary-color: #ff00ff;
+    --accent-color: #ffff00;
+}
+
+[data-theme="cosmic"] {
+    --bg-color: linear-gradient(45deg, #0c0c2c, #1a1a3e, #2d2d5f);
+    --container-bg: rgba(26, 26, 62, 0.8);
+    --text-color: #ffffff;
+    --border-color: #4a4a8f;
+    --input-bg: rgba(22, 33, 62, 0.8);
+    --input-border: #6a6aaf;
+    --list-bg: rgba(22, 33, 62, 0.8);
+    --list-hover: rgba(37, 37, 84, 0.8);
+    --scrollbar-track: rgba(22, 33, 62, 0.8);
+    --scrollbar-thumb: #8a8acf;
+    --scrollbar-thumb-hover: #aaaaf0;
+    --primary-color: #4a9eff;
+    --secondary-color: #9a4aff;
+    --accent-color: #ff4a9a;
+}
+
+[data-theme="retro"] {
+    --bg-color: #2d1b2e;
+    --container-bg: #3d2b3e;
+    --text-color: #f4e4f4;
+    --border-color: #8b5a8c;
+    --input-bg: #4d3b4e;
+    --input-border: #9b6a9c;
+    --list-bg: #4d3b4e;
+    --list-hover: #5d4b5e;
+    --scrollbar-track: #4d3b4e;
+    --scrollbar-thumb: #9b6a9c;
+    --scrollbar-thumb-hover: #ab7aac;
+    --primary-color: #ff6b9d;
+    --secondary-color: #ffa726;
+    --accent-color: #42a5f5;
+}
+
+/* Particle Canvas */
+#particleCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Enhanced animations */
+@keyframes spinAnimation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.1); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px var(--primary-color); }
+    50% { box-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--primary-color); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
 }
 
 body {
-    font-family: sans-serif;
+    font-family: 'Arial', sans-serif;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    background-color: var(--bg-color);
+    background: var(--bg-color);
     padding: 20px;
     box-sizing: border-box;
     color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+/* Cosmic theme background */
+[data-theme="cosmic"] body {
+    background: linear-gradient(45deg, #0c0c2c, #1a1a3e, #2d2d5f);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Neon theme glow effects */
+[data-theme="neon"] .container {
+    border: 2px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+[data-theme="neon"] #spinBtn {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-color);
 }
 
 .container {
@@ -59,8 +241,44 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     max-width: 1000px;
     width: 100%;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
 }
+
+.theme-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.theme-btn {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.theme-btn.active {
+    border-width: 3px;
+    box-shadow: 0 0 15px var(--primary-color);
+}
+
+.theme-btn.light { background: linear-gradient(45deg, #f4f4f4, #ffffff); }
+.theme-btn.dark { background: linear-gradient(45deg, #1a1a1a, #2d2d2d); }
+.theme-btn.neon { background: linear-gradient(45deg, #0a0a0a, #00ffff, #ff00ff); }
+.theme-btn.cosmic { background: linear-gradient(45deg, #0c0c2c, #4a9eff, #9a4aff); }
+.theme-btn.retro { background: linear-gradient(45deg, #2d1b2e, #ff6b9d, #ffa726); }
 
 .main-content {
     display: flex;
@@ -68,7 +286,7 @@ body {
     align-items: flex-start;
     gap: 30px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 60px;
 }
 
 .wheel-section {
@@ -85,133 +303,190 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     align-self: stretch;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 h1, h2 {
     color: var(--text-color);
     margin-bottom: 15px;
     text-align: center;
+    transition: all 0.3s ease;
+}
+
+[data-theme="neon"] h1, [data-theme="neon"] h2 {
+    text-shadow: 0 0 10px var(--text-color);
+    animation: glow 2s ease-in-out infinite alternate;
 }
 
 .wheel-container {
     position: relative;
-    width: 400px; /* Match canvas width */
-    height: 400px; /* Match canvas height */
-    margin-bottom: 30px;
-    display: flex; /* Use flex to center button */
-    justify-content: center;
-    align-items: center;
+    width: 400px;
+    height: 400px;
+    margin-bottom: 20px;
 }
 
 .pointer {
     position: absolute;
-    top: -20px; /* Position above the wheel */
+    top: -15px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 30px;
-    color: #e74c3c;
-    z-index: 10; /* Ensure it's above the canvas */
+    color: var(--accent-color);
+    z-index: 10;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+}
+
+[data-theme="neon"] .pointer {
+    color: var(--accent-color);
+    filter: drop-shadow(0 0 10px var(--accent-color));
+    animation: glow 1.5s ease-in-out infinite alternate;
 }
 
 #wheelCanvas {
-    display: block;
     border-radius: 50%;
-    /* Remove the default transition */
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+[data-theme="neon"] #wheelCanvas {
+    box-shadow: 0 0 30px var(--primary-color), 0 0 60px var(--secondary-color);
+}
+
+[data-theme="cosmic"] #wheelCanvas {
+    box-shadow: 0 0 40px rgba(74, 158, 255, 0.5), 0 0 80px rgba(154, 74, 255, 0.3);
 }
 
 #spinBtn {
-    position: absolute; /* Position over the center */
-    /* Center the button */
-    top: 50%;
+    position: absolute;
+    bottom: -60px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #fff;
-    border: 5px solid #e0e0e0;
-    font-weight: bold;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 25px;
     font-size: 18px;
-    color: #333;
+    font-weight: bold;
     cursor: pointer;
-    z-index: 5; /* Above canvas, below pointer */
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-#spinBtn:hover:not(:disabled) {
-    background-color: #f8f8f8;
-    border-color: #ccc;
+#spinBtn:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-#spinBtn:disabled {
-    cursor: not-allowed;
-    background-color: #eee;
-    color: #aaa;
-    border-color: #ddd;
+#spinBtn:active {
+    transform: translateX(-50%) translateY(0px);
 }
 
+#spinBtn.spinning {
+    animation: shake 0.5s ease-in-out;
+    background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+}
+
+#result {
+    background-color: var(--list-bg);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+    min-width: 300px;
+    transition: all 0.3s ease;
+}
+
+#resultText {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+#resultText.winner {
+    animation: bounceIn 0.6s ease-out;
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
+[data-theme="neon"] #resultText.winner {
+    text-shadow: 0 0 15px var(--primary-color);
+    animation: bounceIn 0.6s ease-out, glow 1s ease-in-out infinite alternate;
+}
+
+/* Options list styling */
 .add-option {
     display: flex;
+    gap: 10px;
     margin-bottom: 15px;
-    gap: 8px;
 }
 
-#optionInput {
-    flex-grow: 1;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.2s;
+.add-option input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--input-border);
+    border-radius: 5px;
     background-color: var(--input-bg);
-    border-color: var(--input-border);
     color: var(--text-color);
+    transition: all 0.3s ease;
 }
 
-#optionInput:focus {
-    border-color: #2ecc71;
+[data-theme="neon"] .add-option input {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+.add-option input:focus {
     outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
 }
 
-#addOptionBtn {
-    padding: 12px 20px;
-    border: none;
-    background-color: #2ecc71;
+.add-option button {
+    padding: 10px 15px;
+    background-color: var(--primary-color);
     color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 6px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
-#addOptionBtn:hover {
-    background-color: #27ae60;
+.add-option button:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.error-message {
+    color: var(--accent-color);
+    font-size: 14px;
+    margin-bottom: 10px;
+    min-height: 20px;
+    transition: all 0.3s ease;
 }
 
 #optionsList {
     list-style: none;
     padding: 0;
-    margin-top: 15px;
-    max-height: 400px;
+    margin: 0;
+    max-height: 300px;
     overflow-y: auto;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
     background-color: var(--list-bg);
-    border-color: var(--border-color);
+    transition: all 0.3s ease;
 }
 
 #optionsList li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
-    border-bottom-color: var(--border-color);
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 #optionsList li:hover {
@@ -222,178 +497,59 @@ h1, h2 {
     border-bottom: none;
 }
 
-#optionsList span {
-    flex-grow: 1;
-    text-align: left;
-    margin-right: 10px;
-    word-break: break-word; /* Prevent long text overflow */
-}
-
-#optionsList button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    width: 28px;
-    height: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#optionsList button:hover {
-    background-color: #c0392b;
-}
-
-#optionsList button:disabled {
-    background-color: #bdc3c7;
-    cursor: not-allowed;
-}
-
-/* Custom scrollbar for the options list */
-#optionsList::-webkit-scrollbar {
-    width: 8px;
-}
-
-#optionsList::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
-    border-radius: 4px;
-}
-
-#optionsList::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
-    border-radius: 4px;
-}
-
-#optionsList::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbar-thumb-hover);
-}
-
-.error-message {
-    color: #e74c3c;
-    font-size: 0.9em;
-    margin-top: 5px;
-    min-height: 1.2em; /* Reserve space */
-}
-
-#result {
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    background-color: #eafaf1;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #a9dfbf;
-    margin-top: 20px;
-    transition: all 0.3s ease;
-}
-
-#result.winner {
-    animation: winnerPulse 1s ease-in-out;
-    background: linear-gradient(45deg, #eafaf1, #a9dfbf);
-    border-color: #2ecc71;
-    box-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
-}
-
-#resultText {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #145a32;
-    min-height: 1.5em;
-    transition: all 0.3s ease;
-}
-
-#resultText.winner {
-    animation: winnerText 1s ease-in-out;
-    color: #1e8449;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-}
-
-@keyframes winnerPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-@keyframes winnerText {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* Make it responsive */
-@media (max-width: 900px) {
-    .main-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .controls {
-        min-width: unset;
-        width: 100%;
-        max-width: 400px;
-        margin-top: 30px;
-    }
-
-    .wheel-container {
-        width: 300px;
-        height: 300px;
-    }
-
-    #wheelCanvas {
-        width: 300px;
-        height: 300px;
-    }
-}
-
-/* Theme toggle button */
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--container-bg);
-    border: 2px solid var(--border-color);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+#optionsList li span {
+    flex: 1;
     color: var(--text-color);
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.theme-toggle:hover {
+#optionsList li button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+#optionsList li button:hover {
+    background-color: #c0392b;
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Add timer styles */
+/* Timer section */
 .timer-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 30px;
+    text-align: center;
     background-color: var(--list-bg);
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .timer-display {
-    font-size: 1.5em;
+    font-size: 36px;
     font-weight: bold;
-    color: var(--text-color);
-    min-width: 100px;
-    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+}
+
+[data-theme="neon"] .timer-display {
+    text-shadow: 0 0 15px var(--primary-color);
+    animation: glow 2s ease-in-out infinite alternate;
 }
 
 .timer-controls {
     display: flex;
-    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .timer-btn {
@@ -406,31 +562,34 @@ h1, h2 {
 }
 
 #startTimerBtn {
-    background-color: #2ecc71;
+    background-color: var(--primary-color);
     color: white;
 }
 
 #startTimerBtn:hover {
-    background-color: #27ae60;
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
 }
 
 #stopTimerBtn {
-    background-color: #e74c3c;
+    background-color: var(--accent-color);
     color: white;
     display: none;
 }
 
 #stopTimerBtn:hover {
     background-color: #c0392b;
+    transform: scale(1.05);
 }
 
 #resetTimerBtn {
-    background-color: #3498db;
+    background-color: var(--secondary-color);
     color: white;
 }
 
 #resetTimerBtn:hover {
-    background-color: #2980b9;
+    background-color: var(--primary-color);
+    transform: scale(1.05);
 }
 
 .timer-input {
@@ -442,10 +601,170 @@ h1, h2 {
     color: var(--text-color);
     text-align: center;
     font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+/* Scrollbar customization */
+#optionsList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#optionsList::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 4px;
+}
+
+#optionsList::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+#optionsList::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Statistics panel */
+.stats-panel {
+    margin-top: 20px;
+    background-color: var(--list-bg);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.stats-panel h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.stats-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.stats-list li:last-child {
+    border-bottom: none;
+}
+
+/* Spin history panel */
+.history-panel {
+    margin-top: 20px;
+    background-color: var(--list-bg);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.history-panel h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.history-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-color);
+    display: flex;
+    justify-content: space-between;
+}
+
+.history-list li:last-child {
+    border-bottom: none;
+}
+
+.history-list .timestamp {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .wheel-container {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .controls {
+        min-width: unset;
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .theme-selector {
+        position: static;
+        margin-bottom: 20px;
+        justify-content: center;
+    }
+    
+    .main-content {
+        margin-top: 20px;
+    }
+}
+
+/* Loading animation */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.loading {
+    animation: spin 1s linear infinite;
 }
 </style>
 <body>
-    <div class="container">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div id="loadingText" class="loading-text">Loading Wheel of Rewards</div>
+        <div id="loadingSubtext" class="loading-subtext">Preparing your rewards...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content">
+        <!-- Particle Canvas for effects -->
+        <canvas id="particleCanvas"></canvas>
+        
+        <div class="container">
+        <!-- Theme Selector -->
+        <div class="theme-selector">
+            <div class="theme-btn light" data-theme="light" title="Light Theme"></div>
+            <div class="theme-btn dark" data-theme="dark" title="Dark Theme"></div>
+            <div class="theme-btn neon" data-theme="neon" title="Neon Theme"></div>
+            <div class="theme-btn cosmic" data-theme="cosmic" title="Cosmic Theme"></div>
+            <div class="theme-btn retro" data-theme="retro" title="Retro Theme"></div>
+        </div>
+        
         <h1>Wheel of Rewards</h1>
         
         <div class="main-content">
@@ -471,10 +790,26 @@ h1, h2 {
                 <ul id="optionsList">
                     <!-- Options will be listed here -->
                 </ul>
+                
+                <!-- Statistics Panel -->
+                <div class="stats-panel">
+                    <h3>📊 Statistics</h3>
+                    <ul class="stats-list" id="statsList">
+                        <li><span>No spins yet</span></li>
+                    </ul>
+                </div>
+                
+                <!-- Spin History Panel -->
+                <div class="history-panel">
+                    <h3>🕒 Recent Spins</h3>
+                    <ul class="history-list" id="historyList">
+                        <li><span>No history yet</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <!-- Add timer section -->
+        <!-- Timer section -->
         <div class="timer-section">
             <div class="timer-display" id="timerDisplay">00:00</div>
             <div class="timer-controls">
@@ -486,418 +821,716 @@ h1, h2 {
         </div>
     </div>
 
-    <!-- Add theme toggle button -->
-    <button class="theme-toggle" id="themeToggle">🌙</button>
-
-    <!-- Add audio elements -->
-    <!-- Updated: June 18, 2024 -->
+    <!-- Audio elements -->
+    <audio id="introSound" preload="auto" src="wheel-intro.mp3" type="audio/mpeg"></audio>
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
     <audio id="winSound" preload="auto" src="win.mp3" type="audio/mpeg"></audio>
 
-    <!-- Add confetti library -->
+    <!-- Enhanced confetti library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-    <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        const canvas = document.getElementById('wheelCanvas');
-        const ctx = canvas.getContext('2d');
-        const spinBtn = document.getElementById('spinBtn');
-        const optionInput = document.getElementById('optionInput');
-        const addOptionBtn = document.getElementById('addOptionBtn');
-        const optionsList = document.getElementById('optionsList');
-        const resultText = document.getElementById('resultText');
-        const errorMessage = document.getElementById('errorMessage');
-        const tickSound = document.getElementById('tickSound');
-        const winSound = document.getElementById('winSound');
-    
-        let tickInterval = null;
-    
-        function startTicking() {
-            stopTicking();
-            tickSound.currentTime = 0;
-            tickSound.play().catch(() => {});
-            tickInterval = setInterval(() => {
+            // === PARTICLE SYSTEM ===
+            class ParticleSystem {
+                constructor() {
+                    this.canvas = document.getElementById('particleCanvas');
+                    this.ctx = this.canvas.getContext('2d');
+                    this.particles = [];
+                    this.setupCanvas();
+                }
+                
+                setupCanvas() {
+                    this.canvas.width = window.innerWidth;
+                    this.canvas.height = window.innerHeight;
+                    this.canvas.style.position = 'fixed';
+                    this.canvas.style.top = '0';
+                    this.canvas.style.left = '0';
+                    this.canvas.style.pointerEvents = 'none';
+                    this.canvas.style.zIndex = '1000';
+                }
+                
+                createFireworks(x, y) {
+                    const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0', '#ff9f43', '#54a0ff', '#5f27cd'];
+                    for (let i = 0; i < 20; i++) {
+                        this.particles.push({
+                            x: x,
+                            y: y,
+                            vx: (Math.random() - 0.5) * 15,
+                            vy: (Math.random() - 0.5) * 15,
+                            life: 60,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            size: Math.random() * 4 + 2,
+                            type: 'firework'
+                        });
+                    }
+                }
+                
+                createSparkles(x, y, count = 15) {
+                    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+                    let colors;
+                    
+                    switch(theme) {
+                        case 'neon':
+                            colors = ['#00ffff', '#ff00ff', '#ffff00', '#ff8000'];
+                            break;
+                        case 'cosmic':
+                            colors = ['#4a9eff', '#9a4aff', '#ff4a9a', '#4affff'];
+                            break;
+                        case 'retro':
+                            colors = ['#ff6b9d', '#ffa726', '#42a5f5', '#ab47bc'];
+                            break;
+                        default:
+                            colors = ['#ffd700', '#ff6b6b', '#48dbfb', '#1dd1a1'];
+                    }
+                    
+                    for (let i = 0; i < count; i++) {
+                        this.particles.push({
+                            x: x + (Math.random() - 0.5) * 100,
+                            y: y + (Math.random() - 0.5) * 100,
+                            vx: (Math.random() - 0.5) * 8,
+                            vy: (Math.random() - 0.5) * 8,
+                            life: 40,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            size: Math.random() * 3 + 1,
+                            type: 'sparkle'
+                        });
+                    }
+                }
+                
+                createShootingStars() {
+                    for (let i = 0; i < 5; i++) {
+                        this.particles.push({
+                            x: Math.random() * this.canvas.width,
+                            y: -50,
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: Math.random() * 3 + 2,
+                            life: 80,
+                            color: '#ffffff',
+                            size: Math.random() * 2 + 1,
+                            type: 'star',
+                            trail: []
+                        });
+                    }
+                }
+                
+                update() {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    for (let i = this.particles.length - 1; i >= 0; i--) {
+                        const p = this.particles[i];
+                        
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.life--;
+                        
+                        if (p.type === 'firework') {
+                            p.vy += 0.3; // gravity
+                            p.vx *= 0.98; // air resistance
+                            p.vy *= 0.98;
+                        } else if (p.type === 'star') {
+                            p.trail.push({x: p.x, y: p.y});
+                            if (p.trail.length > 10) p.trail.shift();
+                        }
+                        
+                        // Draw particle
+                        this.ctx.save();
+                        this.ctx.globalAlpha = p.life / (p.type === 'star' ? 80 : p.type === 'firework' ? 60 : 40);
+                        this.ctx.fillStyle = p.color;
+                        
+                        if (p.type === 'star') {
+                            // Draw trail
+                            this.ctx.strokeStyle = p.color;
+                            this.ctx.lineWidth = p.size;
+                            this.ctx.beginPath();
+                            p.trail.forEach((point, index) => {
+                                if (index === 0) this.ctx.moveTo(point.x, point.y);
+                                else this.ctx.lineTo(point.x, point.y);
+                            });
+                            this.ctx.stroke();
+                        } else if (p.type === 'sparkle') {
+                            // Draw sparkle with rotation
+                            this.ctx.translate(p.x, p.y);
+                            this.ctx.rotate(p.life * 0.1);
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(-p.size, 0);
+                            this.ctx.lineTo(p.size, 0);
+                            this.ctx.moveTo(0, -p.size);
+                            this.ctx.lineTo(0, p.size);
+                            this.ctx.lineWidth = p.size * 0.5;
+                            this.ctx.strokeStyle = p.color;
+                            this.ctx.stroke();
+                        } else {
+                            // Draw firework particle
+                            this.ctx.beginPath();
+                            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        }
+                        
+                        this.ctx.restore();
+                        
+                        if (p.life <= 0) {
+                            this.particles.splice(i, 1);
+                        }
+                    }
+                    
+                    if (this.particles.length > 0) {
+                        requestAnimationFrame(() => this.update());
+                    }
+                }
+                
+                start() {
+                    if (this.particles.length === 0) return;
+                    this.update();
+                }
+            }
+
+            // === ENHANCED WHEEL SYSTEM ===
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const spinBtn = document.getElementById('spinBtn');
+            const optionInput = document.getElementById('optionInput');
+            const addOptionBtn = document.getElementById('addOptionBtn');
+            const optionsList = document.getElementById('optionsList');
+            const resultText = document.getElementById('resultText');
+            const errorMessage = document.getElementById('errorMessage');
+            const tickSound = document.getElementById('tickSound');
+            const winSound = document.getElementById('winSound');
+            const introSound = document.getElementById('introSound');
+            const statsList = document.getElementById('statsList');
+            const historyList = document.getElementById('historyList');
+            
+            // Initialize particle system
+            const particles = new ParticleSystem();
+            
+            // Resize particle canvas on window resize
+            window.addEventListener('resize', () => {
+                particles.setupCanvas();
+            });
+            
+            let tickInterval = null;
+            let isSpinning = false;
+            let options = ["+15 min Screen Time", "+30 min Screen Time", "+35 min Screen Time", "+15 min Screen Time", "+30 min Screen Time", "Free Spin", "+45 min Screen Time", "+15 min Screen Time", "+30 min Screen Time", "Jackpot $pin", "+15 min Screen Time", "+30 min Screen Time", "+45 min Screen Time", "+60 min Screen Time"];
+            let currentRotation = 0;
+            let spinAnimation;
+            let statistics = {};
+            let spinHistory = [];
+            
+            // Enhanced colors for different themes
+            const colorSchemes = {
+                light: ["#ff6b6b", "#feca57", "#48dbfb", "#1dd1a1", "#f368e0", "#ff9f43", "#54a0ff", "#5f27cd"],
+                dark: ["#e55a5a", "#e6b84f", "#41c5db", "#1ac497", "#e05ed1", "#e6893b", "#4d98f0", "#5624b5"],
+                neon: ["#ff0080", "#00ffff", "#ffff00", "#ff8000", "#8000ff", "#00ff80", "#ff4080", "#80ff00"],
+                cosmic: ["#4a9eff", "#9a4aff", "#ff4a9a", "#4affff", "#ffa74a", "#4aff9a", "#ff9a4a", "#9aff4a"],
+                retro: ["#ff6b9d", "#ffa726", "#42a5f5", "#ab47bc", "#66bb6a", "#ff7043", "#26c6da", "#ec407a"]
+            };
+            
+            function getCurrentColors() {
+                const theme = document.documentElement.getAttribute('data-theme') || 'light';
+                return colorSchemes[theme] || colorSchemes.light;
+            }
+            
+            function startTicking() {
+                stopTicking();
                 tickSound.currentTime = 0;
                 tickSound.play().catch(() => {});
-            }, 175);
-        }
-    
-        function stopTicking() {
-            if (tickInterval) {
-                clearInterval(tickInterval);
-                tickInterval = null;
+                tickInterval = setInterval(() => {
+                    tickSound.currentTime = 0;
+                    tickSound.play().catch(() => {});
+                }, 175);
             }
-            tickSound.pause();
-            tickSound.currentTime = 0;
-        }
-    
-        // Initial options (can be empty)];
-        let isSpinning = false;
-        let options = ["+15 min Screen Time", "+30 min Screen Time", "+35 min Screen Time", "+15 min Screen Time", "+30 min Screen Time", "Free Spin", "+45 min Screen Time", "+15 min Screen Time", "+30 min Screen Time", "Jackpot $pin", "+15 min Screen Time", "+30 min Screen Time", "+45 min Screen Time", "+60 min Screen Time"];
-        let currentRotation = 0;
-        let spinAnimation;
-    
-        // Colors for the segments (add more if needed, they will cycle)
-        const colors = ["#ff6b6b", "#feca57", "#48dbfb", "#1dd1a1", "#f368e0", "#ff9f43", "#54a0ff", "#5f27cd", "#ff6b6b", "#feca57", "#48dbfb", "#1dd1a1", "#f368e0", "#ff9f43", "#54a0ff", "#5f27cd"];
-    
-        function drawWheel(rotation = 0) {
-            const numOptions = options.length;
-            if (numOptions === 0) {
+            
+            function stopTicking() {
+                if (tickInterval) {
+                    clearInterval(tickInterval);
+                    tickInterval = null;
+                }
+                tickSound.pause();
+                tickSound.currentTime = 0;
+            }
+            
+            function drawWheel(rotation = 0) {
+                const numOptions = options.length;
+                if (numOptions === 0) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2 - 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#eee';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ccc';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    return;
+                }
+
+                const arcSize = (2 * Math.PI) / numOptions;
+                const radius = canvas.width / 2;
+                const centerX = radius;
+                const centerY = radius;
+                const colors = getCurrentColors();
+
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.beginPath();
-                ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2 - 5, 0, 2 * Math.PI);
-                ctx.fillStyle = '#eee';
-                ctx.fill();
-                ctx.strokeStyle = '#ccc';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                return;
-            }
-
-            const arcSize = (2 * Math.PI) / numOptions;
-            const radius = canvas.width / 2;
-            const centerX = radius;
-            const centerY = radius;
-
-            // Clear and save context
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-
-            // Move to center and rotate
-            ctx.translate(centerX, centerY);
-            ctx.rotate(rotation);
-            ctx.translate(-centerX, -centerY);
-
-            options.forEach((option, i) => {
-                const angle = i * arcSize;
-                
-                // Draw segment
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius - 5, angle, angle + arcSize);
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Draw text
                 ctx.save();
-                ctx.fillStyle = '#333';
-                ctx.translate(
-                    centerX + Math.cos(angle + arcSize / 2) * (radius * 0.7),
-                    centerY + Math.sin(angle + arcSize / 2) * (radius * 0.7)
-                );
-                ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.font = 'bold 16px Arial';
+                ctx.translate(centerX, centerY);
+                ctx.rotate(rotation);
+                ctx.translate(-centerX, -centerY);
 
-                // Truncate long text if necessary
-                const maxTextWidth = radius * 0.4;
-                let displayText = option;
-                if (ctx.measureText(displayText).width > maxTextWidth && displayText.length > 5) {
-                    displayText = displayText.substring(0, Math.floor(displayText.length * maxTextWidth / ctx.measureText(displayText).width)) + '...';
-                }
+                options.forEach((option, i) => {
+                    const angle = i * arcSize;
+                    
+                    // Draw segment with enhanced styling
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius - 5, angle, angle + arcSize);
+                    
+                    // Gradient fill for better visual appeal
+                    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+                    gradient.addColorStop(0, colors[i % colors.length]);
+                    gradient.addColorStop(1, adjustBrightness(colors[i % colors.length], -20));
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    
+                    // Enhanced text rendering
+                    ctx.save();
+                    ctx.fillStyle = '#fff';
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 1;
+                    ctx.translate(
+                        centerX + Math.cos(angle + arcSize / 2) * (radius * 0.7),
+                        centerY + Math.sin(angle + arcSize / 2) * (radius * 0.7)
+                    );
+                    ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 14px Arial';
 
-                ctx.fillText(displayText, 0, 0);
+                    const maxTextWidth = radius * 0.4;
+                    let displayText = option;
+                    if (ctx.measureText(displayText).width > maxTextWidth && displayText.length > 5) {
+                        displayText = displayText.substring(0, Math.floor(displayText.length * maxTextWidth / ctx.measureText(displayText).width)) + '...';
+                    }
+
+                    ctx.strokeText(displayText, 0, 0);
+                    ctx.fillText(displayText, 0, 0);
+                    ctx.restore();
+                });
+
                 ctx.restore();
-            });
-
-            ctx.restore();
-        }
-    
-        function updateOptionsList() {
-            optionsList.innerHTML = ''; // Clear existing list
-            options.forEach((option, index) => {
-                const li = document.createElement('li');
-                const span = document.createElement('span');
-                span.textContent = option;
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = 'X';
-                removeBtn.onclick = () => removeOption(index);
-                // Disable removing if only 2 options left
-                if (options.length <= 2) {
-                    removeBtn.disabled = true;
-                    removeBtn.style.opacity = '0.5';
-                     removeBtn.style.cursor = 'not-allowed';
-                }
-    
-                li.appendChild(span);
-                li.appendChild(removeBtn);
-                optionsList.appendChild(li);
-            });
-             // Enable/disable spin button based on number of options
-             spinBtn.disabled = options.length < 2;
-             showError(options.length < 2 ? "Need at least 2 options to spin." : "");
-        }
-    
-         function showError(message) {
-            errorMessage.textContent = message;
-        }
-    
-    
-        function addOption() {
-            const newOption = optionInput.value.trim();
-            if (newOption) {
-                 if (options.includes(newOption)) {
-                     showError(`Option "${newOption}" already exists.`);
-                     return; // Don't add duplicates
-                 }
-                options.push(newOption);
-                optionInput.value = ''; // Clear input
-                updateOptionsList();
-                drawWheel();
-                 showError(""); // Clear any previous error
-            } else {
-                 showError("Option cannot be empty.");
             }
-        }
-    
-        function removeOption(indexToRemove) {
-            if (options.length > 2) {
-                options.splice(indexToRemove, 1);
-                updateOptionsList();
-                drawWheel();
-                showError(""); // Clear any previous error
-            } else {
-                 showError("Cannot remove, minimum of 2 options required.");
+            
+            function adjustBrightness(hex, percent) {
+                const num = parseInt(hex.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) + amt;
+                const G = (num >> 8 & 0x00FF) + amt;
+                const B = (num & 0x0000FF) + amt;
+                return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
             }
-        }
-    
-        function spin() {
-            if (isSpinning || options.length < 2) return;
-
-            isSpinning = true;
-            spinBtn.disabled = true;
-            resultText.textContent = 'Spinning...';
-            showError("");
-
-            startTicking();
-
-            // Calculate spin parameters
-            const minRotations = 10; // Increased minimum rotations
-            const maxExtraRotations = 8; // More potential extra rotations
-            const totalRotations = minRotations + Math.random() * maxExtraRotations;
-            const spinDuration = 7000; // Longer duration for more dramatic ending
-            const startTime = performance.now();
-            const startRotation = currentRotation;
-            const totalRotation = (totalRotations * Math.PI * 2) + (Math.random() * Math.PI * 2);
-
-            // Cancel any existing animation
-            if (spinAnimation) {
-                cancelAnimationFrame(spinAnimation);
-            }
-
-            // Animate the spin
-            function animate(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / spinDuration, 1);
+            
+            function updateStatistics() {
+                // Update statistics object
+                options.forEach(option => {
+                    if (!statistics[option]) statistics[option] = 0;
+                });
                 
-                // Single smooth easing function for the entire animation
-                // Uses a custom curve that starts fast and has a long, smooth tail
-                const easeOut = 1 - Math.pow(1 - progress, 3.5);
+                // Clean up removed options
+                Object.keys(statistics).forEach(key => {
+                    if (!options.includes(key)) delete statistics[key];
+                });
                 
-                currentRotation = startRotation + (totalRotation * easeOut);
-                drawWheel(currentRotation);
-
-                // Adjust tick sound frequency based on instantaneous speed
-                if (progress > 0.4) {  // Start slowing down ticks after 40% of the animation
-                    const speedFactor = Math.pow(1 - progress, 2.5);  // Calculate relative speed
-                    const newInterval = 175 + (1 - speedFactor) * 800;  // Map speed to interval (175ms to 975ms)
-                    if (tickInterval) {
-                        clearInterval(tickInterval);
-                        tickInterval = setInterval(() => {
-                            tickSound.currentTime = 0;
-                            tickSound.play().catch(() => {});
-                        }, newInterval);
-                    }
-                }
-
-                if (progress < 1) {
-                    spinAnimation = requestAnimationFrame(animate);
+                // Update display
+                if (Object.keys(statistics).length === 0 || Object.values(statistics).every(v => v === 0)) {
+                    statsList.innerHTML = '<li><span>No spins yet</span></li>';
                 } else {
-                    // Spin complete
-                    stopTicking();
-                    winSound.currentTime = 0;
-                    winSound.play().catch(() => {});
-
-                    // Calculate winner
-                    const finalAngle = (currentRotation % (Math.PI * 2));
-                    const normalizedAngle = (Math.PI * 1.5 - finalAngle + Math.PI * 2) % (Math.PI * 2);
-                    const winningIndex = Math.floor(normalizedAngle / (Math.PI * 2 / options.length));
-
-                    // Add winner animation
-                    const resultDiv = document.getElementById('result');
-                    const resultText = document.getElementById('resultText');
-                    resultDiv.classList.add('winner');
-                    resultText.classList.add('winner');
-                    resultText.textContent = `${options[winningIndex]}`;
-
-                    // Trigger over-the-top celebration!
-                    const duration = 3000;
-                    const animationEnd = Date.now() + duration;
-                    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-                    function randomInRange(min, max) {
-                        return Math.random() * (max - min) + min;
-                    }
-
-                    const interval = setInterval(() => {
-                        const timeLeft = animationEnd - Date.now();
-
-                        if (timeLeft <= 0) {
-                            return clearInterval(interval);
-                        }
-
-                        const particleCount = 50 * (timeLeft / duration);
-
-                        // Fire confetti from multiple angles
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-                        });
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-                        });
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.4, 0.6), y: Math.random() - 0.2 }
-                        });
-
-                        // Add some fun shapes
-                        confetti({
-                            ...defaults,
-                            particleCount: 5,
-                            scalar: 1.2,
-                            shapes: ['star'],
-                            colors: ['#FFD700', '#FFA500', '#FF69B4'],
-                            origin: { x: randomInRange(0.3, 0.7), y: Math.random() - 0.2 }
-                        });
-                    }, 250);
-
-                    // Remove animation classes after animation completes
-                    setTimeout(() => {
-                        resultDiv.classList.remove('winner');
-                        resultText.classList.remove('winner');
-                    }, 1000);
-
-                    isSpinning = false;
-                    spinBtn.disabled = options.length < 2;
+                    const sorted = Object.entries(statistics).sort((a, b) => b[1] - a[1]);
+                    statsList.innerHTML = sorted.map(([option, count]) => 
+                        `<li><span>${option}</span><span>${count}</span></li>`
+                    ).join('');
                 }
             }
-
-            spinAnimation = requestAnimationFrame(animate);
-        }
-
-        // --- Event Listeners ---
-        spinBtn.addEventListener('click', spin);
-        addOptionBtn.addEventListener('click', addOption);
-        optionInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                addOption();
+            
+            function updateHistory(result) {
+                const timestamp = new Date().toLocaleTimeString();
+                spinHistory.unshift({ result, timestamp });
+                if (spinHistory.length > 10) spinHistory.pop();
+                
+                if (spinHistory.length === 0) {
+                    historyList.innerHTML = '<li><span>No history yet</span></li>';
+                } else {
+                    historyList.innerHTML = spinHistory.map(entry => 
+                        `<li><span>${entry.result}</span><span class="timestamp">${entry.timestamp}</span></li>`
+                    ).join('');
+                }
             }
-        });
-
-        // --- Initial Setup ---
-        updateOptionsList();
-        drawWheel();
-
-        // Add theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-        
-        // Set initial theme based on system preference
-        if (prefersDarkScheme.matches) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeToggle.textContent = '☀️';
-        }
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
-            document.documentElement.setAttribute('data-theme', newTheme);
-            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-            
-            // Save preference
-            localStorage.setItem('theme', newTheme);
-        });
+            function updateOptionsList() {
+                optionsList.innerHTML = '';
+                options.forEach((option, index) => {
+                    const li = document.createElement('li');
+                    const span = document.createElement('span');
+                    span.textContent = option;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'X';
+                    removeBtn.onclick = () => removeOption(index);
+                    
+                    if (options.length <= 2) {
+                        removeBtn.disabled = true;
+                        removeBtn.style.opacity = '0.5';
+                        removeBtn.style.cursor = 'not-allowed';
+                    }
 
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-        }
+                    li.appendChild(span);
+                    li.appendChild(removeBtn);
+                    optionsList.appendChild(li);
+                });
+                
+                spinBtn.disabled = options.length < 2;
+                showError(options.length < 2 ? "Need at least 2 options to spin." : "");
+                updateStatistics();
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+            }
+            
+            function addOption() {
+                const newOption = optionInput.value.trim();
+                if (newOption) {
+                    if (options.includes(newOption)) {
+                        showError(`Option "${newOption}" already exists.`);
+                        return;
+                    }
+                    options.push(newOption);
+                    optionInput.value = '';
+                    updateOptionsList();
+                    drawWheel(currentRotation);
+                    showError('');
+                }
+            }
+            
+            function removeOption(index) {
+                if (options.length > 2) {
+                    const removedOption = options[index];
+                    options.splice(index, 1);
+                    if (statistics[removedOption]) delete statistics[removedOption];
+                    updateOptionsList();
+                    drawWheel(currentRotation);
+                    showError('');
+                }
+            }
+            
+            function enhancedConfetti() {
+                const theme = document.documentElement.getAttribute('data-theme') || 'light';
+                let confettiColors;
+                
+                switch(theme) {
+                    case 'neon':
+                        confettiColors = ['#ff0080', '#00ffff', '#ffff00', '#ff8000'];
+                        break;
+                    case 'cosmic':
+                        confettiColors = ['#4a9eff', '#9a4aff', '#ff4a9a', '#4affff'];
+                        break;
+                    case 'retro':
+                        confettiColors = ['#ff6b9d', '#ffa726', '#42a5f5', '#ab47bc'];
+                        break;
+                    default:
+                        confettiColors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0'];
+                }
+                
+                // Multi-burst confetti
+                const confettiSettings = {
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: confettiColors
+                };
+                
+                confetti(confettiSettings);
+                setTimeout(() => confetti({...confettiSettings, origin: { x: 0.7, y: 0.6 }}), 250);
+                setTimeout(() => confetti({...confettiSettings, origin: { x: 0.3, y: 0.6 }}), 400);
+            }
+            
+            function spin() {
+                if (isSpinning || options.length < 2) return;
+                
+                isSpinning = true;
+                spinBtn.disabled = true;
+                spinBtn.classList.add('spinning');
+                spinBtn.textContent = 'SPINNING...';
+                
+                const spinDuration = 3000 + Math.random() * 2000; // 3-5 seconds
+                const totalRotation = 1440 + Math.random() * 1440; // 4-8 full rotations
+                const startRotation = currentRotation;
+                const endRotation = startRotation + totalRotation;
+                
+                let startTime = null;
+                startTicking();
+                
+                // Create particle effects during spin
+                const particleInterval = setInterval(() => {
+                    const rect = canvas.getBoundingClientRect();
+                    particles.createSparkles(
+                        rect.left + rect.width / 2 + (Math.random() - 0.5) * 100,
+                        rect.top + rect.height / 2 + (Math.random() - 0.5) * 100,
+                        3
+                    );
+                    particles.start();
+                }, 200);
+                
+                function animate(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const elapsed = timestamp - startTime;
+                    const progress = Math.min(elapsed / spinDuration, 1);
+                    
+                    // Easing function for realistic deceleration
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    currentRotation = startRotation + (totalRotation * easeOut);
+                    
+                    drawWheel(currentRotation);
+                    
+                    if (progress < 1) {
+                        spinAnimation = requestAnimationFrame(animate);
+                    } else {
+                        clearInterval(particleInterval);
+                        stopTicking();
+                        
+                        // Determine winner
+                        const normalizedRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+                        const segmentAngle = (2 * Math.PI) / options.length;
+                        const winningIndex = Math.floor((2 * Math.PI - normalizedRotation + segmentAngle / 2) / segmentAngle) % options.length;
+                        const winner = options[winningIndex];
+                        
+                        // Update statistics and history
+                        statistics[winner] = (statistics[winner] || 0) + 1;
+                        updateStatistics();
+                        updateHistory(winner);
+                        
+                        // Display result with enhanced effects
+                        resultText.textContent = winner;
+                        resultText.classList.add('winner');
+                        setTimeout(() => resultText.classList.remove('winner'), 1000);
+                        
+                        // Enhanced celebration effects
+                        setTimeout(() => {
+                            enhancedConfetti();
+                            winSound.play().catch(() => {});
+                            
+                            // Add fireworks and shooting stars
+                            const rect = canvas.getBoundingClientRect();
+                            particles.createFireworks(
+                                rect.left + rect.width / 2,
+                                rect.top + rect.height / 2
+                            );
+                            particles.createShootingStars();
+                            particles.start();
+                        }, 500);
+                        
+                        // Reset button
+                        isSpinning = false;
+                        spinBtn.disabled = false;
+                        spinBtn.classList.remove('spinning');
+                        spinBtn.textContent = 'SPIN';
+                    }
+                }
+                
+                spinAnimation = requestAnimationFrame(animate);
+            }
+            
+            // === THEME SYSTEM ===
+            const themeButtons = document.querySelectorAll('.theme-btn');
+            
+            function setTheme(themeName) {
+                document.documentElement.setAttribute('data-theme', themeName);
+                localStorage.setItem('theme', themeName);
+                
+                // Update active theme button
+                themeButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
+                
+                // Redraw wheel with new colors
+                drawWheel(currentRotation);
+            }
+            
+            // Initialize theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+            
+            // Theme button event listeners
+            themeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTheme(btn.getAttribute('data-theme'));
+                });
+            });
+            
+            // === EVENT LISTENERS ===
+            spinBtn.addEventListener('click', spin);
+            addOptionBtn.addEventListener('click', addOption);
+            optionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addOption();
+                }
+            });
+            
+            // === TIMER FUNCTIONALITY ===
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerInput = document.getElementById('timerInput');
+            const startTimerBtn = document.getElementById('startTimerBtn');
+            const stopTimerBtn = document.getElementById('stopTimerBtn');
+            const resetTimerBtn = document.getElementById('resetTimerBtn');
+            
+            let timerInterval;
+            let timeLeft;
+            let isTimerRunning = false;
 
-        // Add timer functionality
-        const timerDisplay = document.getElementById('timerDisplay');
-        const timerInput = document.getElementById('timerInput');
-        const startTimerBtn = document.getElementById('startTimerBtn');
-        const stopTimerBtn = document.getElementById('stopTimerBtn');
-        const resetTimerBtn = document.getElementById('resetTimerBtn');
-        
-        let timerInterval;
-        let timeLeft;
-        let isTimerRunning = false;
+            function updateTimerDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
 
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        function startTimer() {
-            if (isTimerRunning) return;
-            
-            const minutes = parseInt(timerInput.value) || 1;
-            timeLeft = minutes * 60;
-            isTimerRunning = true;
-            
-            startTimerBtn.style.display = 'none';
-            stopTimerBtn.style.display = 'block';
-            
-            updateTimerDisplay();
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
+            function startTimer() {
+                if (isTimerRunning) return;
+                
+                const minutes = parseInt(timerInput.value) || 1;
+                timeLeft = minutes * 60;
+                isTimerRunning = true;
+                
+                startTimerBtn.style.display = 'none';
+                stopTimerBtn.style.display = 'block';
+                
                 updateTimerDisplay();
                 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    isTimerRunning = false;
-                    startTimerBtn.style.display = 'block';
-                    stopTimerBtn.style.display = 'none';
-                    spin(); // Auto-spin when timer reaches zero
-                }
-            }, 1000);
-        }
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        startTimerBtn.style.display = 'block';
+                        stopTimerBtn.style.display = 'none';
+                        spin(); // Auto-spin when timer reaches zero
+                    }
+                }, 1000);
+            }
 
-        function stopTimer() {
-            if (!isTimerRunning) return;
+            function stopTimer() {
+                if (!isTimerRunning) return;
+                
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                startTimerBtn.style.display = 'block';
+                stopTimerBtn.style.display = 'none';
+            }
+
+            function resetTimer() {
+                stopTimer();
+                timeLeft = 0;
+                updateTimerDisplay();
+            }
+
+            startTimerBtn.addEventListener('click', startTimer);
+            stopTimerBtn.addEventListener('click', stopTimer);
+            resetTimerBtn.addEventListener('click', resetTimer);
             
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            startTimerBtn.style.display = 'block';
-            stopTimerBtn.style.display = 'none';
-        }
-
-        function resetTimer() {
-            stopTimer();
-            timeLeft = 0;
-            updateTimerDisplay();
-        }
-
-        startTimerBtn.addEventListener('click', startTimer);
-        stopTimerBtn.addEventListener('click', stopTimer);
-        resetTimerBtn.addEventListener('click', resetTimer);
-    }); // End of DOMContentLoaded listener
-</script>
+            // === INTRO MUSIC FUNCTIONALITY ===
+            let audioContextUnlocked = false;
+            let introMusicPlayed = false;
+            
+            // Set up intro music
+            introSound.volume = 0.7;
+            introSound.loop = false;
+            
+            // Loading screen management with interactive ready state
+            function showReadyState() {
+                console.log('Audio loaded, showing ready state...');
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                const spinner = document.querySelector('.loading-spinner');
+                const loadingText = document.getElementById('loadingText');
+                const loadingSubtext = document.getElementById('loadingSubtext');
+                
+                // Change to ready state
+                loadingOverlay.classList.add('loading-ready');
+                spinner.style.display = 'none';
+                loadingText.textContent = '🎵 Ready!';
+                loadingSubtext.textContent = 'Click anywhere to start';
+                
+                // Add click handler to start everything
+                loadingOverlay.addEventListener('click', startWheelExperience);
+            }
+            
+            // Start the full wheel experience with music
+            function startWheelExperience() {
+                console.log('User clicked to start, launching wheel with music...');
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                
+                // Hide loading screen
+                loadingOverlay.classList.add('hidden');
+                
+                // Play intro music immediately (user-initiated action)
+                setTimeout(() => {
+                    playIntroMusic();
+                }, 200);
+            }
+            
+            // Show ready state after 1.5 seconds
+            setTimeout(() => {
+                showReadyState();
+            }, 1500);
+            
+            // The loading screen click now handles all user interaction needs
+            
+            // Function to play intro music
+            function playIntroMusic() {
+                if (introMusicPlayed) {
+                    console.log('Intro music already played, skipping...');
+                    return; // Prevent multiple plays
+                }
+                
+                console.log('Playing intro music...');
+                introMusicPlayed = true;
+                introSound.currentTime = 0;
+                
+                const playPromise = introSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Intro music started successfully!');
+                    }).catch((error) => {
+                        console.log('Music play failed:', error);
+                        // Reset flag to allow retry
+                        introMusicPlayed = false;
+                    });
+                } else {
+                    console.log('No play promise returned');
+                }
+            }
+            
+            // No additional interaction listeners needed - loading screen handles it all!
+            
+            // Test if audio file exists
+            introSound.addEventListener('loadstart', () => {
+                console.log('Audio loading started...');
+            });
+            
+            introSound.addEventListener('canplay', () => {
+                console.log('Audio can start playing...');
+            });
+            
+            introSound.addEventListener('error', (e) => {
+                console.error('Audio loading error:', e);
+            });
+            
+            // === INITIAL SETUP ===
+            updateOptionsList();
+            drawWheel();
+        });
+    </script>
+    </div> <!-- End main content -->
 </body>
 </html>

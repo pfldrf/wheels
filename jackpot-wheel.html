@@ -4,9 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jackpot Wheel</title>
-    <link rel="stylesheet" href="style.css">
+
 </head>
 <style>
+/* Loading Screen Styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+    cursor: pointer;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loading-text {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.loading-subtext {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.loading-ready {
+    background: linear-gradient(45deg, #28a745 0%, #20c997 100%) !important;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.main-content {
+    opacity: 1;
+}
+
 /* Add dark mode styles */
 :root {
     --bg-color: #f4f4f4;
@@ -445,7 +512,16 @@ h1, h2 {
 }
 </style>
 <body>
-    <div class="container">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div id="loadingText" class="loading-text">Loading Jackpot Wheel</div>
+        <div id="loadingSubtext" class="loading-subtext">Preparing your fortune...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content">
+        <div class="container">
         <h1>Jackpot Wheel</h1>
         
         <div class="main-content">
@@ -490,6 +566,7 @@ h1, h2 {
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
     <!-- Add audio elements -->
+    <audio id="introSound" preload="auto" src="wheel-intro.mp3" type="audio/mpeg"></audio>
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
     <audio id="winSound" preload="auto" src="win.mp3"></audio>
 
@@ -509,6 +586,7 @@ h1, h2 {
         const errorMessage = document.getElementById('errorMessage');
         const tickSound = document.getElementById('tickSound');
         const winSound = document.getElementById('winSound');
+        const introSound = document.getElementById('introSound');
     
         let tickInterval = null;
     
@@ -803,10 +881,98 @@ h1, h2 {
             }
         });
 
+        // === INTRO MUSIC FUNCTIONALITY ===
+        let audioContextUnlocked = false;
+        let introMusicPlayed = false;
+        
+        // Set up intro music
+        introSound.volume = 0.7;
+        introSound.loop = false;
+        
+        // Loading screen management with interactive ready state
+        function showReadyState() {
+            console.log('Audio loaded, showing ready state...');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const spinner = document.querySelector('.loading-spinner');
+            const loadingText = document.getElementById('loadingText');
+            const loadingSubtext = document.getElementById('loadingSubtext');
+            
+            // Change to ready state
+            loadingOverlay.classList.add('loading-ready');
+            spinner.style.display = 'none';
+            loadingText.textContent = '🎵 Ready!';
+            loadingSubtext.textContent = 'Click anywhere to start';
+            
+            // Add click handler to start everything
+            loadingOverlay.addEventListener('click', startWheelExperience);
+        }
+        
+        // Start the full wheel experience with music
+        function startWheelExperience() {
+            console.log('User clicked to start, launching wheel with music...');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            // Hide loading screen
+            loadingOverlay.classList.add('hidden');
+            
+            // Play intro music immediately (user-initiated action)
+            setTimeout(() => {
+                playIntroMusic();
+            }, 200);
+        }
+        
+        // Show ready state after 1.5 seconds
+        setTimeout(() => {
+            showReadyState();
+        }, 1500);
+        
+        // Function to play intro music
+        function playIntroMusic() {
+            if (introMusicPlayed) {
+                console.log('Intro music already played, skipping...');
+                return; // Prevent multiple plays
+            }
+            
+            console.log('Playing intro music...');
+            introMusicPlayed = true;
+            introSound.currentTime = 0;
+            
+            const playPromise = introSound.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Intro music started successfully!');
+                }).catch((error) => {
+                    console.log('Music play failed:', error);
+                    // Reset flag to allow retry
+                    introMusicPlayed = false;
+                });
+            } else {
+                console.log('No play promise returned');
+            }
+        }
+        
+        // No additional interaction listeners needed - loading screen handles it all!
+        
+        // Test if audio file exists
+        introSound.addEventListener('loadstart', () => {
+            console.log('Audio loading started...');
+        });
+        
+        introSound.addEventListener('canplay', () => {
+            console.log('Audio can start playing...');
+        });
+        
+        introSound.addEventListener('error', (e) => {
+            console.error('Audio loading error:', e);
+        });
+
         // --- Initial Setup ---
         updateOptionsList();
         drawWheel();
+    </script>
+    </div> <!-- End main content -->
 
+    <script>
         // Add theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
         const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');

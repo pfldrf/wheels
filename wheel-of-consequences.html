@@ -4,10 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheel of Consequences</title>
-    <link rel="stylesheet" href="style.css">
+
 </head>
 <style>
-/* Add dark mode styles */
+/* Loading Screen Styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+    cursor: pointer;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loading-text {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.loading-subtext {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.loading-ready {
+    background: linear-gradient(45deg, #28a745 0%, #20c997 100%) !important;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.main-content {
+    opacity: 1;
+}
+
+/* Enhanced Visual Themes for Consequences */
 :root {
     --bg-color: #f4f4f4;
     --container-bg: #fff;
@@ -20,6 +87,9 @@
     --scrollbar-track: #f1f1f1;
     --scrollbar-thumb: #888;
     --scrollbar-thumb-hover: #555;
+    --primary-color: #e74c3c;
+    --secondary-color: #8e44ad;
+    --accent-color: #c0392b;
 }
 
 [data-theme="dark"] {
@@ -34,19 +104,170 @@
     --scrollbar-track: #2d2d2d;
     --scrollbar-thumb: #666;
     --scrollbar-thumb-hover: #888;
+    --primary-color: #e74c3c;
+    --secondary-color: #9b59b6;
+    --accent-color: #c0392b;
+}
+
+[data-theme="spooky"] {
+    --bg-color: #0a0a0a;
+    --container-bg: #1a1a1a;
+    --text-color: #ff6b6b;
+    --border-color: #8b0000;
+    --input-bg: #2d1616;
+    --input-border: #8b0000;
+    --list-bg: #2d1616;
+    --list-hover: #3d2020;
+    --scrollbar-track: #2d1616;
+    --scrollbar-thumb: #8b0000;
+    --scrollbar-thumb-hover: #a00000;
+    --primary-color: #ff4444;
+    --secondary-color: #8b0000;
+    --accent-color: #ff0000;
+}
+
+[data-theme="gothic"] {
+    --bg-color: #1a0a1a;
+    --container-bg: #2d1d2d;
+    --text-color: #d8b7d8;
+    --border-color: #5d2d5d;
+    --input-bg: #3d2d3d;
+    --input-border: #5d2d5d;
+    --list-bg: #3d2d3d;
+    --list-hover: #4d3d4d;
+    --scrollbar-track: #3d2d3d;
+    --scrollbar-thumb: #5d2d5d;
+    --scrollbar-thumb-hover: #6d3d6d;
+    --primary-color: #8e44ad;
+    --secondary-color: #663399;
+    --accent-color: #4a235a;
+}
+
+[data-theme="inferno"] {
+    --bg-color: #2c1810;
+    --container-bg: #3c2820;
+    --text-color: #ff8c42;
+    --border-color: #8b4513;
+    --input-bg: #4c3830;
+    --input-border: #8b4513;
+    --list-bg: #4c3830;
+    --list-hover: #5c4840;
+    --scrollbar-track: #4c3830;
+    --scrollbar-thumb: #8b4513;
+    --scrollbar-thumb-hover: #a0522d;
+    --primary-color: #ff6b35;
+    --secondary-color: #ff8c42;
+    --accent-color: #d84315;
+}
+
+/* Particle Canvas */
+#particleCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Enhanced animations */
+@keyframes spinAnimation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.1); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes ominousGlow {
+    0%, 100% { box-shadow: 0 0 5px var(--primary-color); }
+    50% { box-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--accent-color); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+@keyframes dramaticPulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
 
 body {
-    font-family: sans-serif;
+    font-family: 'Arial', sans-serif;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    background-color: var(--bg-color);
+    background: var(--bg-color);
     padding: 20px;
     box-sizing: border-box;
     color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+/* Spooky theme background */
+[data-theme="spooky"] body {
+    background: radial-gradient(circle at center, #1a0a0a, #0a0a0a);
+    background-size: 200% 200%;
+    animation: darkPulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes darkPulse {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* Gothic theme background */
+[data-theme="gothic"] body {
+    background: linear-gradient(45deg, #1a0a1a, #2d1d2d, #1a0a1a);
+    background-size: 400% 400%;
+    animation: gothicShift 10s ease infinite;
+}
+
+@keyframes gothicShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Inferno theme background */
+[data-theme="inferno"] body {
+    background: linear-gradient(45deg, #2c1810, #4c3830, #6c5850, #2c1810);
+    background-size: 400% 400%;
+    animation: infernoShift 8s ease infinite;
+}
+
+@keyframes infernoShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Special theme glow effects */
+[data-theme="spooky"] .container {
+    border: 2px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.3), inset 0 0 20px rgba(255, 107, 107, 0.1);
+}
+
+[data-theme="gothic"] .container {
+    border: 2px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(142, 68, 173, 0.3), inset 0 0 20px rgba(216, 183, 216, 0.1);
+}
+
+[data-theme="spooky"] #spinBtn, [data-theme="gothic"] #spinBtn, [data-theme="inferno"] #spinBtn {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-color);
 }
 
 .container {
@@ -59,8 +280,44 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     max-width: 1000px;
     width: 100%;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
 }
+
+.theme-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.theme-btn {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.theme-btn.active {
+    border-width: 3px;
+    box-shadow: 0 0 15px var(--primary-color);
+}
+
+.theme-btn.light { background: linear-gradient(45deg, #f4f4f4, #ffffff); }
+.theme-btn.dark { background: linear-gradient(45deg, #1a1a1a, #2d2d2d); }
+.theme-btn.spooky { background: linear-gradient(45deg, #0a0a0a, #8b0000, #ff4444); }
+.theme-btn.gothic { background: linear-gradient(45deg, #1a0a1a, #8e44ad, #d8b7d8); }
+.theme-btn.inferno { background: linear-gradient(45deg, #2c1810, #ff6b35, #ff8c42); }
 
 .main-content {
     display: flex;
@@ -68,7 +325,7 @@ body {
     align-items: flex-start;
     gap: 30px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 60px;
 }
 
 .wheel-section {
@@ -85,133 +342,214 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     align-self: stretch;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 h1, h2 {
     color: var(--text-color);
     margin-bottom: 15px;
     text-align: center;
+    transition: all 0.3s ease;
+}
+
+[data-theme="spooky"] h1, [data-theme="spooky"] h2 {
+    text-shadow: 0 0 10px var(--text-color);
+    animation: flicker 3s ease-in-out infinite alternate;
+}
+
+[data-theme="gothic"] h1, [data-theme="gothic"] h2 {
+    text-shadow: 0 0 10px var(--text-color);
+    animation: ominousGlow 2s ease-in-out infinite alternate;
+}
+
+[data-theme="inferno"] h1, [data-theme="inferno"] h2 {
+    text-shadow: 0 0 10px var(--accent-color);
+    animation: flicker 2.5s ease-in-out infinite;
 }
 
 .wheel-container {
     position: relative;
-    width: 400px; /* Match canvas width */
-    height: 400px; /* Match canvas height */
-    margin-bottom: 30px;
-    display: flex; /* Use flex to center button */
-    justify-content: center;
-    align-items: center;
+    width: 400px;
+    height: 400px;
+    margin-bottom: 20px;
 }
 
 .pointer {
     position: absolute;
-    top: -20px; /* Position above the wheel */
+    top: -15px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 30px;
-    color: #e74c3c;
-    z-index: 10; /* Ensure it's above the canvas */
+    color: var(--accent-color);
+    z-index: 10;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+}
+
+[data-theme="spooky"] .pointer {
+    color: var(--accent-color);
+    filter: drop-shadow(0 0 10px var(--accent-color));
+    animation: flicker 2s ease-in-out infinite alternate;
+}
+
+[data-theme="gothic"] .pointer, [data-theme="inferno"] .pointer {
+    filter: drop-shadow(0 0 10px var(--accent-color));
+    animation: ominousGlow 1.5s ease-in-out infinite alternate;
 }
 
 #wheelCanvas {
-    display: block;
     border-radius: 50%;
-    /* Remove the default transition */
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+[data-theme="spooky"] #wheelCanvas {
+    box-shadow: 0 0 30px var(--primary-color), 0 0 60px var(--accent-color);
+}
+
+[data-theme="gothic"] #wheelCanvas {
+    box-shadow: 0 0 40px rgba(142, 68, 173, 0.5), 0 0 80px rgba(216, 183, 216, 0.3);
+}
+
+[data-theme="inferno"] #wheelCanvas {
+    box-shadow: 0 0 40px rgba(255, 107, 53, 0.5), 0 0 80px rgba(255, 140, 66, 0.3);
 }
 
 #spinBtn {
-    position: absolute; /* Position over the center */
-    /* Center the button */
-    top: 50%;
+    position: absolute;
+    bottom: -60px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #fff;
-    border: 5px solid #e0e0e0;
-    font-weight: bold;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 25px;
     font-size: 18px;
-    color: #333;
+    font-weight: bold;
     cursor: pointer;
-    z-index: 5; /* Above canvas, below pointer */
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-#spinBtn:hover:not(:disabled) {
-    background-color: #f8f8f8;
-    border-color: #ccc;
+#spinBtn:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-#spinBtn:disabled {
-    cursor: not-allowed;
-    background-color: #eee;
-    color: #aaa;
-    border-color: #ddd;
+#spinBtn:active {
+    transform: translateX(-50%) translateY(0px);
 }
 
+#spinBtn.spinning {
+    animation: shake 0.5s ease-in-out;
+    background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+}
+
+#result {
+    background-color: var(--list-bg);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+    min-width: 300px;
+    transition: all 0.3s ease;
+}
+
+#resultText {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+#resultText.consequence {
+    animation: dramaticPulse 0.8s ease-out;
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
+[data-theme="spooky"] #resultText.consequence {
+    text-shadow: 0 0 15px var(--primary-color);
+    animation: dramaticPulse 0.8s ease-out, flicker 1s ease-in-out infinite alternate;
+}
+
+[data-theme="gothic"] #resultText.consequence, [data-theme="inferno"] #resultText.consequence {
+    text-shadow: 0 0 15px var(--primary-color);
+    animation: dramaticPulse 0.8s ease-out, ominousGlow 1s ease-in-out infinite alternate;
+}
+
+/* Options list styling */
 .add-option {
     display: flex;
+    gap: 10px;
     margin-bottom: 15px;
-    gap: 8px;
 }
 
-#optionInput {
-    flex-grow: 1;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.2s;
+.add-option input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--input-border);
+    border-radius: 5px;
     background-color: var(--input-bg);
-    border-color: var(--input-border);
     color: var(--text-color);
+    transition: all 0.3s ease;
 }
 
-#optionInput:focus {
-    border-color: #2ecc71;
+[data-theme="spooky"] .add-option input, [data-theme="gothic"] .add-option input, [data-theme="inferno"] .add-option input {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+.add-option input:focus {
     outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
 }
 
-#addOptionBtn {
-    padding: 12px 20px;
-    border: none;
-    background-color: #2ecc71;
+.add-option button {
+    padding: 10px 15px;
+    background-color: var(--primary-color);
     color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 6px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
-#addOptionBtn:hover {
-    background-color: #27ae60;
+.add-option button:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.error-message {
+    color: var(--accent-color);
+    font-size: 14px;
+    margin-bottom: 10px;
+    min-height: 20px;
+    transition: all 0.3s ease;
 }
 
 #optionsList {
     list-style: none;
     padding: 0;
-    margin-top: 15px;
-    max-height: 400px;
+    margin: 0;
+    max-height: 300px;
     overflow-y: auto;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
     background-color: var(--list-bg);
-    border-color: var(--border-color);
+    transition: all 0.3s ease;
 }
 
 #optionsList li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
-    border-bottom-color: var(--border-color);
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
 }
 
 #optionsList li:hover {
@@ -222,178 +560,64 @@ h1, h2 {
     border-bottom: none;
 }
 
-#optionsList span {
-    flex-grow: 1;
-    text-align: left;
-    margin-right: 10px;
-    word-break: break-word; /* Prevent long text overflow */
-}
-
-#optionsList button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    width: 28px;
-    height: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#optionsList button:hover {
-    background-color: #c0392b;
-}
-
-#optionsList button:disabled {
-    background-color: #bdc3c7;
-    cursor: not-allowed;
-}
-
-/* Custom scrollbar for the options list */
-#optionsList::-webkit-scrollbar {
-    width: 8px;
-}
-
-#optionsList::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
-    border-radius: 4px;
-}
-
-#optionsList::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
-    border-radius: 4px;
-}
-
-#optionsList::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbar-thumb-hover);
-}
-
-.error-message {
-    color: #e74c3c;
-    font-size: 0.9em;
-    margin-top: 5px;
-    min-height: 1.2em; /* Reserve space */
-}
-
-#result {
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    background-color: #eafaf1;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #a9dfbf;
-    margin-top: 20px;
-    transition: all 0.3s ease;
-}
-
-#result.winner {
-    animation: winnerPulse 1s ease-in-out;
-    background: linear-gradient(45deg, #eafaf1, #a9dfbf);
-    border-color: #2ecc71;
-    box-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
-}
-
-#resultText {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #145a32;
-    min-height: 1.5em;
-    transition: all 0.3s ease;
-}
-
-#resultText.winner {
-    animation: winnerText 1s ease-in-out;
-    color: #1e8449;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-}
-
-@keyframes winnerPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-@keyframes winnerText {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* Make it responsive */
-@media (max-width: 900px) {
-    .main-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .controls {
-        min-width: unset;
-        width: 100%;
-        max-width: 400px;
-        margin-top: 30px;
-    }
-
-    .wheel-container {
-        width: 300px;
-        height: 300px;
-    }
-
-    #wheelCanvas {
-        width: 300px;
-        height: 300px;
-    }
-}
-
-/* Theme toggle button */
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--container-bg);
-    border: 2px solid var(--border-color);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+#optionsList li span {
+    flex: 1;
     color: var(--text-color);
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.theme-toggle:hover {
+#optionsList li button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+#optionsList li button:hover {
+    background-color: var(--primary-color);
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Add timer styles */
+/* Timer section */
 .timer-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 30px;
+    text-align: center;
     background-color: var(--list-bg);
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .timer-display {
-    font-size: 1.5em;
+    font-size: 36px;
     font-weight: bold;
-    color: var(--text-color);
-    min-width: 100px;
-    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+}
+
+[data-theme="spooky"] .timer-display {
+    text-shadow: 0 0 15px var(--primary-color);
+    animation: flicker 2s ease-in-out infinite alternate;
+}
+
+[data-theme="gothic"] .timer-display, [data-theme="inferno"] .timer-display {
+    text-shadow: 0 0 15px var(--primary-color);
+    animation: ominousGlow 2s ease-in-out infinite alternate;
 }
 
 .timer-controls {
     display: flex;
-    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .timer-btn {
@@ -406,31 +630,34 @@ h1, h2 {
 }
 
 #startTimerBtn {
-    background-color: #2ecc71;
+    background-color: var(--primary-color);
     color: white;
 }
 
 #startTimerBtn:hover {
-    background-color: #27ae60;
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
 }
 
 #stopTimerBtn {
-    background-color: #e74c3c;
+    background-color: var(--accent-color);
     color: white;
     display: none;
 }
 
 #stopTimerBtn:hover {
-    background-color: #c0392b;
+    background-color: var(--primary-color);
+    transform: scale(1.05);
 }
 
 #resetTimerBtn {
-    background-color: #3498db;
+    background-color: var(--secondary-color);
     color: white;
 }
 
 #resetTimerBtn:hover {
-    background-color: #2980b9;
+    background-color: var(--primary-color);
+    transform: scale(1.05);
 }
 
 .timer-input {
@@ -442,11 +669,171 @@ h1, h2 {
     color: var(--text-color);
     text-align: center;
     font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+/* Scrollbar customization */
+#optionsList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#optionsList::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 4px;
+}
+
+#optionsList::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+#optionsList::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Statistics panel */
+.stats-panel {
+    margin-top: 20px;
+    background-color: var(--list-bg);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.stats-panel h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.stats-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.stats-list li:last-child {
+    border-bottom: none;
+}
+
+/* Spin history panel */
+.history-panel {
+    margin-top: 20px;
+    background-color: var(--list-bg);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.history-panel h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.history-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-color);
+    display: flex;
+    justify-content: space-between;
+}
+
+.history-list li:last-child {
+    border-bottom: none;
+}
+
+.history-list .timestamp {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .wheel-container {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .controls {
+        min-width: unset;
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .theme-selector {
+        position: static;
+        margin-bottom: 20px;
+        justify-content: center;
+    }
+    
+    .main-content {
+        margin-top: 20px;
+    }
+}
+
+/* Loading animation */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.loading {
+    animation: spin 1s linear infinite;
 }
 </style>
 <body>
-    <div class="container">
-        <h1>Wheel of Consequences</h1>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div id="loadingText" class="loading-text">Loading Wheel of Consequences</div>
+        <div id="loadingSubtext" class="loading-subtext">Preparing your challenges...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="main-content">
+        <!-- Particle Canvas for effects -->
+        <canvas id="particleCanvas"></canvas>
+        
+        <div class="container">
+        <!-- Theme Selector -->
+        <div class="theme-selector">
+            <div class="theme-btn light" data-theme="light" title="Light Theme"></div>
+            <div class="theme-btn dark" data-theme="dark" title="Dark Theme"></div>
+            <div class="theme-btn spooky" data-theme="spooky" title="Spooky Theme"></div>
+            <div class="theme-btn gothic" data-theme="gothic" title="Gothic Theme"></div>
+            <div class="theme-btn inferno" data-theme="inferno" title="Inferno Theme"></div>
+        </div>
+        
+        <h1>🎲 Wheel of Consequences 🎲</h1>
         
         <div class="main-content">
             <div class="wheel-section">
@@ -456,25 +843,41 @@ h1, h2 {
                     <button id="spinBtn">SPIN</button>
                 </div>
                 <div id="result">
-                    <h2>Result</h2>
-                    <p id="resultText">Spin the wheel!</p>
+                    <h2>Consequence</h2>
+                    <p id="resultText">Spin the wheel of doom!</p>
                 </div>
             </div>
 
             <div class="controls">
-                <h2>Options</h2>
+                <h2>Consequences</h2>
                 <div class="add-option">
-                    <input type="text" id="optionInput" placeholder="Add new option">
+                    <input type="text" id="optionInput" placeholder="Add new consequence">
                     <button id="addOptionBtn">+</button>
                 </div>
                 <p class="error-message" id="errorMessage"></p>
                 <ul id="optionsList">
                     <!-- Options will be listed here -->
                 </ul>
+                
+                <!-- Statistics Panel -->
+                <div class="stats-panel">
+                    <h3>📊 Consequence Stats</h3>
+                    <ul class="stats-list" id="statsList">
+                        <li><span>No spins yet</span></li>
+                    </ul>
+                </div>
+                
+                <!-- Spin History Panel -->
+                <div class="history-panel">
+                    <h3>💀 Recent Consequences</h3>
+                    <ul class="history-list" id="historyList">
+                        <li><span>No history yet</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <!-- Add timer section -->
+        <!-- Timer section -->
         <div class="timer-section">
             <div class="timer-display" id="timerDisplay">00:00</div>
             <div class="timer-controls">
@@ -486,482 +889,725 @@ h1, h2 {
         </div>
     </div>
 
-    <!-- Add theme toggle button -->
-    <button class="theme-toggle" id="themeToggle">🌙</button>
-
-    <!-- Add audio elements -->
+    <!-- Audio elements -->
+    <audio id="introSound" preload="auto" src="wheel-intro.mp3" type="audio/mpeg"></audio>
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
-    <audio id="winSound" preload="auto" src="consequence.mp3" type="audio/mpeg"></audio>
+    <audio id="consequenceSound" preload="auto" src="consequence.mp3" type="audio/mpeg"></audio>
 
-    <!-- Add confetti library -->
+    <!-- Enhanced confetti library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-    <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        const canvas = document.getElementById('wheelCanvas');
-        const ctx = canvas.getContext('2d');
-        const spinBtn = document.getElementById('spinBtn');
-        const optionInput = document.getElementById('optionInput');
-        const addOptionBtn = document.getElementById('addOptionBtn');
-        const optionsList = document.getElementById('optionsList');
-        const resultText = document.getElementById('resultText');
-        const errorMessage = document.getElementById('errorMessage');
-        const tickSound = document.getElementById('tickSound');
-        const winSound = document.getElementById('winSound');
-    
-        // Preload audio files
-        function preloadAudio() {
-            tickSound.load();
-            winSound.load();
-            
-            // Set volume and other properties
-            tickSound.volume = 0.5;
-            winSound.volume = 1.0; // Full volume for consequence sound
-            
-            // Enable audio context
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const audioContext = new AudioContext();
-            
-            // Resume audio context on user interaction
-            document.addEventListener('click', function resumeAudioContext() {
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume();
+            // === PARTICLE SYSTEM ===
+            class ParticleSystem {
+                constructor() {
+                    this.canvas = document.getElementById('particleCanvas');
+                    this.ctx = this.canvas.getContext('2d');
+                    this.particles = [];
+                    this.setupCanvas();
                 }
-                document.removeEventListener('click', resumeAudioContext);
-            }, { once: true });
-        }
-        
-        // Initialize audio on first user interaction
-        function initAudio() {
-            preloadAudio();
-            const playPromise = tickSound.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    tickSound.pause();
-                    tickSound.currentTime = 0;
-                }).catch(() => {
-                    // Auto-play was prevented, but that's okay
-                });
-            }
-        }
-        
-        // Add click handler to document for audio initialization
-        document.addEventListener('click', function initAudioOnce() {
-            initAudio();
-            document.removeEventListener('click', initAudioOnce);
-        }, { once: true });
-        
-        let tickInterval = null;
-    
-        function startTicking() {
-            stopTicking();
-            tickSound.currentTime = 0;
-            const playPromise = tickSound.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    // Auto-play was prevented, but that's okay
-                });
-            }
-            tickInterval = setInterval(() => {
-                tickSound.currentTime = 0;
-                const playPromise = tickSound.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        // Auto-play was prevented, but that's okay
-                    });
+                
+                setupCanvas() {
+                    this.canvas.width = window.innerWidth;
+                    this.canvas.height = window.innerHeight;
+                    this.canvas.style.position = 'fixed';
+                    this.canvas.style.top = '0';
+                    this.canvas.style.left = '0';
+                    this.canvas.style.pointerEvents = 'none';
+                    this.canvas.style.zIndex = '1000';
                 }
-            }, 175);
-        }
-    
-        function stopTicking() {
-            if (tickInterval) {
-                clearInterval(tickInterval);
-                tickInterval = null;
-            }
-            tickSound.pause();
-            tickSound.currentTime = 0;
-        }
-    
-        // Initial options (can be empty)
-        let options = ["-15 min Screen Time", "-20 min Screen Time", "-25 min Screen Time", "-30 min Screen Time", "-35 min Screen Time", "-40 min Screen Time", "-45 min Screen Time", "-50 min Screen Time", "-55 min Screen Time", "-60 min Screen Time"];
-        let isSpinning = false;
-        let currentRotation = 0;
-        let spinAnimation;
-    
-        // Colors for the segments (add more if needed, they will cycle)
-        const colors = ["#ff6b6b", "#feca57", "#48dbfb", "#1dd1a1", "#f368e0", "#ff9f43", "#54a0ff", "#5f27cd", "#ff6b6b", "#feca57", "#48dbfb", "#1dd1a1", "#f368e0", "#ff9f43", "#54a0ff", "#5f27cd"];
-    
-        function drawWheel(rotation = 0) {
-            const numOptions = options.length;
-            if (numOptions === 0) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.beginPath();
-                ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2 - 5, 0, 2 * Math.PI);
-                ctx.fillStyle = '#eee';
-                ctx.fill();
-                ctx.strokeStyle = '#ccc';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                return;
-            }
-
-            const arcSize = (2 * Math.PI) / numOptions;
-            const radius = canvas.width / 2;
-            const centerX = radius;
-            const centerY = radius;
-
-            // Clear and save context
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-
-            // Move to center and rotate
-            ctx.translate(centerX, centerY);
-            ctx.rotate(rotation);
-            ctx.translate(-centerX, -centerY);
-
-            options.forEach((option, i) => {
-                const angle = i * arcSize;
                 
-                // Draw segment
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius - 5, angle, angle + arcSize);
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Draw text
-                ctx.save();
-                ctx.fillStyle = '#333';
-                ctx.translate(
-                    centerX + Math.cos(angle + arcSize / 2) * (radius * 0.7),
-                    centerY + Math.sin(angle + arcSize / 2) * (radius * 0.7)
-                );
-                ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.font = 'bold 16px Arial';
-
-                // Truncate long text if necessary
-                const maxTextWidth = radius * 0.4;
-                let displayText = option;
-                if (ctx.measureText(displayText).width > maxTextWidth && displayText.length > 5) {
-                    displayText = displayText.substring(0, Math.floor(displayText.length * maxTextWidth / ctx.measureText(displayText).width)) + '...';
-                }
-
-                ctx.fillText(displayText, 0, 0);
-                ctx.restore();
-            });
-
-            ctx.restore();
-        }
-    
-        function updateOptionsList() {
-            optionsList.innerHTML = ''; // Clear existing list
-            options.forEach((option, index) => {
-                const li = document.createElement('li');
-                const span = document.createElement('span');
-                span.textContent = option;
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = 'X';
-                removeBtn.onclick = () => removeOption(index);
-                // Disable removing if only 2 options left
-                if (options.length <= 2) {
-                    removeBtn.disabled = true;
-                    removeBtn.style.opacity = '0.5';
-                     removeBtn.style.cursor = 'not-allowed';
-                }
-    
-                li.appendChild(span);
-                li.appendChild(removeBtn);
-                optionsList.appendChild(li);
-            });
-             // Enable/disable spin button based on number of options
-             spinBtn.disabled = options.length < 2;
-             showError(options.length < 2 ? "Need at least 2 options to spin." : "");
-        }
-    
-         function showError(message) {
-            errorMessage.textContent = message;
-        }
-    
-    
-        function addOption() {
-            const newOption = optionInput.value.trim();
-            if (newOption) {
-                 if (options.includes(newOption)) {
-                     showError(`Option "${newOption}" already exists.`);
-                     return; // Don't add duplicates
-                 }
-                options.push(newOption);
-                optionInput.value = ''; // Clear input
-                updateOptionsList();
-                drawWheel();
-                 showError(""); // Clear any previous error
-            } else {
-                 showError("Option cannot be empty.");
-            }
-        }
-    
-        function removeOption(indexToRemove) {
-            if (options.length > 2) {
-                options.splice(indexToRemove, 1);
-                updateOptionsList();
-                drawWheel();
-                showError(""); // Clear any previous error
-            } else {
-                 showError("Cannot remove, minimum of 2 options required.");
-            }
-        }
-    
-        function spin() {
-            if (isSpinning || options.length < 2) return;
-
-            isSpinning = true;
-            spinBtn.disabled = true;
-            resultText.textContent = 'Spinning...';
-            showError("");
-
-            startTicking();
-
-            // Calculate spin parameters
-            const minRotations = 10; // Increased minimum rotations
-            const maxExtraRotations = 8; // More potential extra rotations
-            const totalRotations = minRotations + Math.random() * maxExtraRotations;
-            const spinDuration = 7000; // Longer duration for more dramatic ending
-            const startTime = performance.now();
-            const startRotation = currentRotation;
-            const totalRotation = (totalRotations * Math.PI * 2) + (Math.random() * Math.PI * 2);
-
-            // Cancel any existing animation
-            if (spinAnimation) {
-                cancelAnimationFrame(spinAnimation);
-            }
-
-            // Animate the spin
-            function animate(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / spinDuration, 1);
-                
-                // Single smooth easing function for the entire animation
-                // Uses a custom curve that starts fast and has a long, smooth tail
-                const easeOut = 1 - Math.pow(1 - progress, 3.5);
-                
-                currentRotation = startRotation + (totalRotation * easeOut);
-                drawWheel(currentRotation);
-
-                // Adjust tick sound frequency based on instantaneous speed
-                if (progress > 0.4) {  // Start slowing down ticks after 40% of the animation
-                    const speedFactor = Math.pow(1 - progress, 2.5);  // Calculate relative speed
-                    const newInterval = 175 + (1 - speedFactor) * 800;  // Map speed to interval (175ms to 975ms)
-                    if (tickInterval) {
-                        clearInterval(tickInterval);
-                        tickInterval = setInterval(() => {
-                            tickSound.currentTime = 0;
-                            tickSound.play().catch(() => {});
-                        }, newInterval);
+                createDramaticExplosion(x, y) {
+                    const colors = ['#e74c3c', '#8e44ad', '#c0392b', '#a569bd', '#ec7063'];
+                    for (let i = 0; i < 25; i++) {
+                        this.particles.push({
+                            x: x,
+                            y: y,
+                            vx: (Math.random() - 0.5) * 18,
+                            vy: (Math.random() - 0.5) * 18,
+                            life: 70,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            size: Math.random() * 6 + 3,
+                            type: 'dramatic'
+                        });
                     }
                 }
-
-                if (progress < 1) {
-                    spinAnimation = requestAnimationFrame(animate);
-                } else {
-                    // Spin complete
-                    stopTicking();
+                
+                createOminousSparkles(x, y, count = 15) {
+                    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+                    let colors;
                     
-                    // Play consequence sound with a small delay to ensure clean audio context
-                    setTimeout(() => {
-                        winSound.currentTime = 0;
-                        const playPromise = winSound.play();
-                        if (playPromise !== undefined) {
-                            playPromise.catch(() => {
-                                // If auto-play fails, try to play on next user interaction
-                                document.addEventListener('click', function playConsequenceSoundOnce() {
-                                    winSound.play().catch(() => {});
-                                    document.removeEventListener('click', playConsequenceSoundOnce);
-                                }, { once: true });
-                            });
-                        }
-                    }, 100);
-
-                    // Calculate winner
-                    const finalAngle = (currentRotation % (Math.PI * 2));
-                    const normalizedAngle = (Math.PI * 1.5 - finalAngle + Math.PI * 2) % (Math.PI * 2);
-                    const winningIndex = Math.floor(normalizedAngle / (Math.PI * 2 / options.length));
-
-                    // Add winner animation
-                    const resultDiv = document.getElementById('result');
-                    const resultText = document.getElementById('resultText');
-                    resultDiv.classList.add('winner');
-                    resultText.classList.add('winner');
-                    resultText.textContent = `${options[winningIndex]}`;
-
-                    // Trigger over-the-top celebration!
-                    const duration = 3000;
-                    const animationEnd = Date.now() + duration;
-                    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-                    function randomInRange(min, max) {
-                        return Math.random() * (max - min) + min;
+                    switch(theme) {
+                        case 'spooky':
+                            colors = ['#ff4444', '#8b0000', '#ff0000', '#a00000'];
+                            break;
+                        case 'gothic':
+                            colors = ['#8e44ad', '#663399', '#d8b7d8', '#5d2d5d'];
+                            break;
+                        case 'inferno':
+                            colors = ['#ff6b35', '#ff8c42', '#d84315', '#8b4513'];
+                            break;
+                        default:
+                            colors = ['#e74c3c', '#8e44ad', '#c0392b', '#a569bd'];
                     }
-
-                    const interval = setInterval(() => {
-                        const timeLeft = animationEnd - Date.now();
-
-                        if (timeLeft <= 0) {
-                            return clearInterval(interval);
+                    
+                    for (let i = 0; i < count; i++) {
+                        this.particles.push({
+                            x: x + (Math.random() - 0.5) * 120,
+                            y: y + (Math.random() - 0.5) * 120,
+                            vx: (Math.random() - 0.5) * 10,
+                            vy: (Math.random() - 0.5) * 10,
+                            life: 50,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            size: Math.random() * 4 + 2,
+                            type: 'ominous'
+                        });
+                    }
+                }
+                
+                createDarkLightning() {
+                    for (let i = 0; i < 8; i++) {
+                        this.particles.push({
+                            x: Math.random() * this.canvas.width,
+                            y: -50,
+                            vx: (Math.random() - 0.5) * 6,
+                            vy: Math.random() * 4 + 3,
+                            life: 90,
+                            color: '#8e44ad',
+                            size: Math.random() * 3 + 2,
+                            type: 'lightning',
+                            trail: []
+                        });
+                    }
+                }
+                
+                update() {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    for (let i = this.particles.length - 1; i >= 0; i--) {
+                        const p = this.particles[i];
+                        
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.life--;
+                        
+                        if (p.type === 'dramatic') {
+                            p.vy += 0.4; // stronger gravity
+                            p.vx *= 0.97; // air resistance
+                            p.vy *= 0.97;
+                        } else if (p.type === 'lightning') {
+                            p.trail.push({x: p.x, y: p.y});
+                            if (p.trail.length > 12) p.trail.shift();
                         }
-
-                        const particleCount = 50 * (timeLeft / duration);
-
-                        // Fire confetti from multiple angles
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-                        });
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-                        });
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.4, 0.6), y: Math.random() - 0.2 }
-                        });
-
-                        // Add some fun shapes
-                        confetti({
-                            ...defaults,
-                            particleCount: 5,
-                            scalar: 1.2,
-                            shapes: ['star'],
-                            colors: ['#FFD700', '#FFA500', '#FF69B4'],
-                            origin: { x: randomInRange(0.3, 0.7), y: Math.random() - 0.2 }
-                        });
-                    }, 250);
-
-                    // Remove animation classes after animation completes
-                    setTimeout(() => {
-                        resultDiv.classList.remove('winner');
-                        resultText.classList.remove('winner');
-                    }, 1000);
-
-                    isSpinning = false;
-                    spinBtn.disabled = options.length < 2;
+                        
+                        // Draw particle
+                        this.ctx.save();
+                        this.ctx.globalAlpha = p.life / (p.type === 'lightning' ? 90 : p.type === 'dramatic' ? 70 : 50);
+                        this.ctx.fillStyle = p.color;
+                        
+                        if (p.type === 'lightning') {
+                            // Draw lightning trail
+                            this.ctx.strokeStyle = p.color;
+                            this.ctx.lineWidth = p.size;
+                            this.ctx.beginPath();
+                            p.trail.forEach((point, index) => {
+                                if (index === 0) this.ctx.moveTo(point.x, point.y);
+                                else this.ctx.lineTo(point.x, point.y);
+                            });
+                            this.ctx.stroke();
+                        } else if (p.type === 'ominous') {
+                            // Draw ominous sparkle with jagged edges
+                            this.ctx.translate(p.x, p.y);
+                            this.ctx.rotate(p.life * 0.15);
+                            this.ctx.beginPath();
+                            for (let j = 0; j < 8; j++) {
+                                const angle = (j / 8) * Math.PI * 2;
+                                const radius = j % 2 === 0 ? p.size : p.size * 0.5;
+                                const x = Math.cos(angle) * radius;
+                                const y = Math.sin(angle) * radius;
+                                if (j === 0) this.ctx.moveTo(x, y);
+                                else this.ctx.lineTo(x, y);
+                            }
+                            this.ctx.closePath();
+                            this.ctx.fill();
+                        } else {
+                            // Draw dramatic particle
+                            this.ctx.beginPath();
+                            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                            this.ctx.fill();
+                            
+                            // Add glow effect
+                            this.ctx.shadowBlur = 20;
+                            this.ctx.shadowColor = p.color;
+                            this.ctx.beginPath();
+                            this.ctx.arc(p.x, p.y, p.size * 0.5, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        }
+                        
+                        this.ctx.restore();
+                        
+                        if (p.life <= 0) {
+                            this.particles.splice(i, 1);
+                        }
+                    }
+                    
+                    if (this.particles.length > 0) {
+                        requestAnimationFrame(() => this.update());
+                    }
+                }
+                
+                start() {
+                    if (this.particles.length === 0) return;
+                    this.update();
                 }
             }
 
-            spinAnimation = requestAnimationFrame(animate);
-        }
-
-        // --- Event Listeners ---
-        spinBtn.addEventListener('click', spin);
-        addOptionBtn.addEventListener('click', addOption);
-        optionInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                addOption();
+            // === ENHANCED WHEEL SYSTEM ===
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const spinBtn = document.getElementById('spinBtn');
+            const optionInput = document.getElementById('optionInput');
+            const addOptionBtn = document.getElementById('addOptionBtn');
+            const optionsList = document.getElementById('optionsList');
+            const resultText = document.getElementById('resultText');
+            const errorMessage = document.getElementById('errorMessage');
+            const tickSound = document.getElementById('tickSound');
+            const consequenceSound = document.getElementById('consequenceSound');
+            const introSound = document.getElementById('introSound');
+            const statsList = document.getElementById('statsList');
+            const historyList = document.getElementById('historyList');
+            
+            // Initialize particle system
+            const particles = new ParticleSystem();
+            
+            // Resize particle canvas on window resize
+            window.addEventListener('resize', () => {
+                particles.setupCanvas();
+            });
+            
+            let tickInterval = null;
+            let isSpinning = false;
+            let options = ["-15 min Screen Time", "-20 min Screen Time", "-25 min Screen Time", "-30 min Screen Time", "-35 min Screen Time", "-40 min Screen Time", "-45 min Screen Time", "-50 min Screen Time", "-55 min Screen Time", "-60 min Screen Time"];
+            let currentRotation = 0;
+            let spinAnimation;
+            let statistics = {};
+            let spinHistory = [];
+            
+            // Enhanced colors for different themes (darker, more dramatic)
+            const colorSchemes = {
+                light: ["#e74c3c", "#8e44ad", "#c0392b", "#a569bd", "#ec7063", "#9b59b6", "#d98880", "#bb8fce"],
+                dark: ["#e74c3c", "#8e44ad", "#c0392b", "#a569bd", "#ec7063", "#9b59b6", "#d98880", "#bb8fce"],
+                spooky: ["#8b0000", "#ff4444", "#a00000", "#ff0000", "#660000", "#cc0000", "#440000", "#ff6666"],
+                gothic: ["#8e44ad", "#663399", "#5d2d5d", "#4a235a", "#d8b7d8", "#b19cd9", "#9a7bd9", "#845ec2"],
+                inferno: ["#ff6b35", "#ff8c42", "#d84315", "#ff5722", "#bf360c", "#ff7043", "#ff8a65", "#ffab91"]
+            };
+            
+            function getCurrentColors() {
+                const theme = document.documentElement.getAttribute('data-theme') || 'light';
+                return colorSchemes[theme] || colorSchemes.light;
             }
-        });
-
-        // --- Initial Setup ---
-        updateOptionsList();
-        drawWheel();
-
-        // Add theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-        
-        // Set initial theme based on system preference
-        if (prefersDarkScheme.matches) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeToggle.textContent = '☀️';
-        }
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
-            document.documentElement.setAttribute('data-theme', newTheme);
-            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            function startTicking() {
+                stopTicking();
+                tickSound.currentTime = 0;
+                tickSound.play().catch(() => {});
+                tickInterval = setInterval(() => {
+                    tickSound.currentTime = 0;
+                    tickSound.play().catch(() => {});
+                }, 175);
+            }
             
-            // Save preference
-            localStorage.setItem('theme', newTheme);
-        });
+            function stopTicking() {
+                if (tickInterval) {
+                    clearInterval(tickInterval);
+                    tickInterval = null;
+                }
+                tickSound.pause();
+                tickSound.currentTime = 0;
+            }
+            
+            function drawWheel(rotation = 0) {
+                const numOptions = options.length;
+                if (numOptions === 0) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2 - 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#eee';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ccc';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    return;
+                }
 
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-        }
+                const arcSize = (2 * Math.PI) / numOptions;
+                const radius = canvas.width / 2;
+                const centerX = radius;
+                const centerY = radius;
+                const colors = getCurrentColors();
 
-        // Add timer functionality
-        const timerDisplay = document.getElementById('timerDisplay');
-        const timerInput = document.getElementById('timerInput');
-        const startTimerBtn = document.getElementById('startTimerBtn');
-        const stopTimerBtn = document.getElementById('stopTimerBtn');
-        const resetTimerBtn = document.getElementById('resetTimerBtn');
-        
-        let timerInterval;
-        let timeLeft;
-        let isTimerRunning = false;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(rotation);
+                ctx.translate(-centerX, -centerY);
 
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
+                options.forEach((option, i) => {
+                    const angle = i * arcSize;
+                    
+                    // Draw segment with enhanced styling
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius - 5, angle, angle + arcSize);
+                    
+                    // Gradient fill for dramatic effect
+                    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+                    gradient.addColorStop(0, colors[i % colors.length]);
+                    gradient.addColorStop(1, adjustBrightness(colors[i % colors.length], -30));
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    
+                    // Enhanced text rendering
+                    ctx.save();
+                    ctx.fillStyle = '#fff';
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.translate(
+                        centerX + Math.cos(angle + arcSize / 2) * (radius * 0.7),
+                        centerY + Math.sin(angle + arcSize / 2) * (radius * 0.7)
+                    );
+                    ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 13px Arial';
 
-        function startTimer() {
-            if (isTimerRunning) return;
+                    const maxTextWidth = radius * 0.4;
+                    let displayText = option;
+                    if (ctx.measureText(displayText).width > maxTextWidth && displayText.length > 5) {
+                        displayText = displayText.substring(0, Math.floor(displayText.length * maxTextWidth / ctx.measureText(displayText).width)) + '...';
+                    }
+
+                    ctx.strokeText(displayText, 0, 0);
+                    ctx.fillText(displayText, 0, 0);
+                    ctx.restore();
+                });
+
+                ctx.restore();
+            }
             
-            const minutes = parseInt(timerInput.value) || 1;
-            timeLeft = minutes * 60;
-            isTimerRunning = true;
+            function adjustBrightness(hex, percent) {
+                const num = parseInt(hex.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) + amt;
+                const G = (num >> 8 & 0x00FF) + amt;
+                const B = (num & 0x0000FF) + amt;
+                return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+            }
             
-            startTimerBtn.style.display = 'none';
-            stopTimerBtn.style.display = 'block';
+            function updateStatistics() {
+                // Update statistics object
+                options.forEach(option => {
+                    if (!statistics[option]) statistics[option] = 0;
+                });
+                
+                // Clean up removed options
+                Object.keys(statistics).forEach(key => {
+                    if (!options.includes(key)) delete statistics[key];
+                });
+                
+                // Update display
+                if (Object.keys(statistics).length === 0 || Object.values(statistics).every(v => v === 0)) {
+                    statsList.innerHTML = '<li><span>No consequences yet</span></li>';
+                } else {
+                    const sorted = Object.entries(statistics).sort((a, b) => b[1] - a[1]);
+                    statsList.innerHTML = sorted.map(([option, count]) => 
+                        `<li><span>${option}</span><span>${count}</span></li>`
+                    ).join('');
+                }
+            }
             
-            updateTimerDisplay();
+            function updateHistory(result) {
+                const timestamp = new Date().toLocaleTimeString();
+                spinHistory.unshift({ result, timestamp });
+                if (spinHistory.length > 10) spinHistory.pop();
+                
+                if (spinHistory.length === 0) {
+                    historyList.innerHTML = '<li><span>No history yet</span></li>';
+                } else {
+                    historyList.innerHTML = spinHistory.map(entry => 
+                        `<li><span>${entry.result}</span><span class="timestamp">${entry.timestamp}</span></li>`
+                    ).join('');
+                }
+            }
             
-            timerInterval = setInterval(() => {
-                timeLeft--;
+            function updateOptionsList() {
+                optionsList.innerHTML = '';
+                options.forEach((option, index) => {
+                    const li = document.createElement('li');
+                    const span = document.createElement('span');
+                    span.textContent = option;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'X';
+                    removeBtn.onclick = () => removeOption(index);
+                    
+                    if (options.length <= 2) {
+                        removeBtn.disabled = true;
+                        removeBtn.style.opacity = '0.5';
+                        removeBtn.style.cursor = 'not-allowed';
+                    }
+
+                    li.appendChild(span);
+                    li.appendChild(removeBtn);
+                    optionsList.appendChild(li);
+                });
+                
+                spinBtn.disabled = options.length < 2;
+                showError(options.length < 2 ? "Need at least 2 consequences to spin." : "");
+                updateStatistics();
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+            }
+            
+            function addOption() {
+                const newOption = optionInput.value.trim();
+                if (newOption) {
+                    if (options.includes(newOption)) {
+                        showError(`Consequence "${newOption}" already exists.`);
+                        return;
+                    }
+                    options.push(newOption);
+                    optionInput.value = '';
+                    updateOptionsList();
+                    drawWheel(currentRotation);
+                    showError('');
+                }
+            }
+            
+            function removeOption(index) {
+                if (options.length > 2) {
+                    const removedOption = options[index];
+                    options.splice(index, 1);
+                    if (statistics[removedOption]) delete statistics[removedOption];
+                    updateOptionsList();
+                    drawWheel(currentRotation);
+                    showError('');
+                }
+            }
+            
+            function dramaticConfetti() {
+                const theme = document.documentElement.getAttribute('data-theme') || 'light';
+                let confettiColors;
+                
+                switch(theme) {
+                    case 'spooky':
+                        confettiColors = ['#8b0000', '#ff4444', '#a00000', '#ff0000'];
+                        break;
+                    case 'gothic':
+                        confettiColors = ['#8e44ad', '#663399', '#d8b7d8', '#5d2d5d'];
+                        break;
+                    case 'inferno':
+                        confettiColors = ['#ff6b35', '#ff8c42', '#d84315', '#8b4513'];
+                        break;
+                    default:
+                        confettiColors = ['#e74c3c', '#8e44ad', '#c0392b', '#a569bd'];
+                }
+                
+                // More dramatic confetti burst
+                const confettiSettings = {
+                    particleCount: 80,
+                    spread: 80,
+                    origin: { y: 0.7 },
+                    colors: confettiColors,
+                    scalar: 1.2
+                };
+                
+                confetti(confettiSettings);
+                setTimeout(() => confetti({...confettiSettings, origin: { x: 0.8, y: 0.7 }}), 200);
+                setTimeout(() => confetti({...confettiSettings, origin: { x: 0.2, y: 0.7 }}), 350);
+            }
+            
+            function spin() {
+                if (isSpinning || options.length < 2) return;
+                
+                isSpinning = true;
+                spinBtn.disabled = true;
+                spinBtn.classList.add('spinning');
+                spinBtn.textContent = 'SPINNING...';
+                
+                const spinDuration = 3500 + Math.random() * 2000; // 3.5-5.5 seconds
+                const totalRotation = 1800 + Math.random() * 1440; // 5-9 full rotations
+                const startRotation = currentRotation;
+                const endRotation = startRotation + totalRotation;
+                
+                let startTime = null;
+                startTicking();
+                
+                // Create ominous particle effects during spin
+                const particleInterval = setInterval(() => {
+                    const rect = canvas.getBoundingClientRect();
+                    particles.createOminousSparkles(
+                        rect.left + rect.width / 2 + (Math.random() - 0.5) * 120,
+                        rect.top + rect.height / 2 + (Math.random() - 0.5) * 120,
+                        4
+                    );
+                    particles.start();
+                }, 250);
+                
+                function animate(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const elapsed = timestamp - startTime;
+                    const progress = Math.min(elapsed / spinDuration, 1);
+                    
+                    // More dramatic easing for consequences
+                    const easeOut = 1 - Math.pow(1 - progress, 4);
+                    currentRotation = startRotation + (totalRotation * easeOut);
+                    
+                    drawWheel(currentRotation);
+                    
+                    if (progress < 1) {
+                        spinAnimation = requestAnimationFrame(animate);
+                    } else {
+                        clearInterval(particleInterval);
+                        stopTicking();
+                        
+                        // Determine consequence
+                        const normalizedRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+                        const segmentAngle = (2 * Math.PI) / options.length;
+                        const winningIndex = Math.floor((2 * Math.PI - normalizedRotation + segmentAngle / 2) / segmentAngle) % options.length;
+                        const consequence = options[winningIndex];
+                        
+                        // Update statistics and history
+                        statistics[consequence] = (statistics[consequence] || 0) + 1;
+                        updateStatistics();
+                        updateHistory(consequence);
+                        
+                        // Display result with dramatic effects
+                        resultText.textContent = consequence;
+                        resultText.classList.add('consequence');
+                        setTimeout(() => resultText.classList.remove('consequence'), 1500);
+                        
+                        // Dramatic celebration effects
+                        setTimeout(() => {
+                            dramaticConfetti();
+                            consequenceSound.play().catch(() => {});
+                            
+                            // Add dramatic explosion and lightning
+                            const rect = canvas.getBoundingClientRect();
+                            particles.createDramaticExplosion(
+                                rect.left + rect.width / 2,
+                                rect.top + rect.height / 2
+                            );
+                            particles.createDarkLightning();
+                            particles.start();
+                        }, 600);
+                        
+                        // Reset button
+                        isSpinning = false;
+                        spinBtn.disabled = false;
+                        spinBtn.classList.remove('spinning');
+                        spinBtn.textContent = 'SPIN';
+                    }
+                }
+                
+                spinAnimation = requestAnimationFrame(animate);
+            }
+            
+            // === THEME SYSTEM ===
+            const themeButtons = document.querySelectorAll('.theme-btn');
+            
+            function setTheme(themeName) {
+                document.documentElement.setAttribute('data-theme', themeName);
+                localStorage.setItem('theme', themeName);
+                
+                // Update active theme button
+                themeButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
+                
+                // Redraw wheel with new colors
+                drawWheel(currentRotation);
+            }
+            
+            // Initialize theme
+            const savedTheme = localStorage.getItem('theme') || 'spooky';  // Default to spooky for consequences
+            setTheme(savedTheme);
+            
+            // Theme button event listeners
+            themeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTheme(btn.getAttribute('data-theme'));
+                });
+            });
+            
+            // === EVENT LISTENERS ===
+            spinBtn.addEventListener('click', spin);
+            addOptionBtn.addEventListener('click', addOption);
+            optionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addOption();
+                }
+            });
+            
+            // === TIMER FUNCTIONALITY ===
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerInput = document.getElementById('timerInput');
+            const startTimerBtn = document.getElementById('startTimerBtn');
+            const stopTimerBtn = document.getElementById('stopTimerBtn');
+            const resetTimerBtn = document.getElementById('resetTimerBtn');
+            
+            let timerInterval;
+            let timeLeft;
+            let isTimerRunning = false;
+
+            function updateTimerDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            function startTimer() {
+                if (isTimerRunning) return;
+                
+                const minutes = parseInt(timerInput.value) || 1;
+                timeLeft = minutes * 60;
+                isTimerRunning = true;
+                
+                startTimerBtn.style.display = 'none';
+                stopTimerBtn.style.display = 'block';
+                
                 updateTimerDisplay();
                 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    isTimerRunning = false;
-                    startTimerBtn.style.display = 'block';
-                    stopTimerBtn.style.display = 'none';
-                    spin(); // Auto-spin when timer reaches zero
-                }
-            }, 1000);
-        }
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        startTimerBtn.style.display = 'block';
+                        stopTimerBtn.style.display = 'none';
+                        spin(); // Auto-spin when timer reaches zero
+                    }
+                }, 1000);
+            }
 
-        function stopTimer() {
-            if (!isTimerRunning) return;
+            function stopTimer() {
+                if (!isTimerRunning) return;
+                
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                startTimerBtn.style.display = 'block';
+                stopTimerBtn.style.display = 'none';
+            }
+
+            function resetTimer() {
+                stopTimer();
+                timeLeft = 0;
+                updateTimerDisplay();
+            }
+
+            startTimerBtn.addEventListener('click', startTimer);
+            stopTimerBtn.addEventListener('click', stopTimer);
+            resetTimerBtn.addEventListener('click', resetTimer);
             
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            startTimerBtn.style.display = 'block';
-            stopTimerBtn.style.display = 'none';
-        }
-
-        function resetTimer() {
-            stopTimer();
-            timeLeft = 0;
-            updateTimerDisplay();
-        }
-
-        startTimerBtn.addEventListener('click', startTimer);
-        stopTimerBtn.addEventListener('click', stopTimer);
-        resetTimerBtn.addEventListener('click', resetTimer);
-    }); // End of DOMContentLoaded listener
-</script>
+            // === INTRO MUSIC FUNCTIONALITY ===
+            let audioContextUnlocked = false;
+            let introMusicPlayed = false;
+            
+            // Set up intro music
+            introSound.volume = 0.7;
+            introSound.loop = false;
+            
+            // Loading screen management with interactive ready state
+            function showReadyState() {
+                console.log('Audio loaded, showing ready state...');
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                const spinner = document.querySelector('.loading-spinner');
+                const loadingText = document.getElementById('loadingText');
+                const loadingSubtext = document.getElementById('loadingSubtext');
+                
+                // Change to ready state
+                loadingOverlay.classList.add('loading-ready');
+                spinner.style.display = 'none';
+                loadingText.textContent = '🎵 Ready!';
+                loadingSubtext.textContent = 'Click anywhere to start';
+                
+                // Add click handler to start everything
+                loadingOverlay.addEventListener('click', startWheelExperience);
+            }
+            
+            // Start the full wheel experience with music
+            function startWheelExperience() {
+                console.log('User clicked to start, launching wheel with music...');
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                
+                // Hide loading screen
+                loadingOverlay.classList.add('hidden');
+                
+                // Play intro music immediately (user-initiated action)
+                setTimeout(() => {
+                    playIntroMusic();
+                }, 200);
+            }
+            
+            // Show ready state after 1.5 seconds
+            setTimeout(() => {
+                showReadyState();
+            }, 1500);
+            
+            // Function to play intro music
+            function playIntroMusic() {
+                if (introMusicPlayed) {
+                    console.log('Intro music already played, skipping...');
+                    return; // Prevent multiple plays
+                }
+                
+                console.log('Playing intro music...');
+                introMusicPlayed = true;
+                introSound.currentTime = 0;
+                
+                const playPromise = introSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Intro music started successfully!');
+                    }).catch((error) => {
+                        console.log('Music play failed:', error);
+                        // Reset flag to allow retry
+                        introMusicPlayed = false;
+                    });
+                } else {
+                    console.log('No play promise returned');
+                }
+            }
+            
+            // No additional interaction listeners needed - loading screen handles it all!
+            
+            // Test if audio file exists
+            introSound.addEventListener('loadstart', () => {
+                console.log('Audio loading started...');
+            });
+            
+            introSound.addEventListener('canplay', () => {
+                console.log('Audio can start playing...');
+            });
+            
+            introSound.addEventListener('error', (e) => {
+                console.error('Audio loading error:', e);
+            });
+            
+            // === INITIAL SETUP ===
+            updateOptionsList();
+            drawWheel();
+        });
+    </script>
+    </div> <!-- End main content -->
 </body>
 </html>
