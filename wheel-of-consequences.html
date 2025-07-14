@@ -1429,11 +1429,11 @@ h1, h2 {
                         clearInterval(particleInterval);
                         stopTicking();
                         
-                        // Determine consequence - Fixed pointer accuracy
+                        // Determine consequence - Fixed pointer accuracy (reversed direction)
                         const normalizedRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
                         const segmentAngle = (2 * Math.PI) / options.length;
-                        // Adjust for pointer being at top (π/2 offset) and correct the calculation
-                        const adjustedRotation = (normalizedRotation + Math.PI/2) % (2 * Math.PI);
+                        // Adjust for pointer being at top and reverse direction to match wheel drawing
+                        const adjustedRotation = (2 * Math.PI - normalizedRotation + Math.PI/2) % (2 * Math.PI);
                         const winningIndex = Math.floor(adjustedRotation / segmentAngle) % options.length;
                         const consequence = options[winningIndex];
                         
