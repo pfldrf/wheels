@@ -1138,7 +1138,7 @@ h1, h2 {
             
             let tickInterval = null;
             let isSpinning = false;
-            let options = ["-15 min Screen Time", "-20 min Screen Time", "-25 min Screen Time", "-30 min Screen Time", "-35 min Screen Time", "-40 min Screen Time", "-45 min Screen Time", "-50 min Screen Time", "-55 min Screen Time", "-60 min Screen Time"];
+            let options = ["-15 Screen Time", "-20 Screen Time", "-25 Screen Time", "-30 Screen Time", "-35 Screen Time", "-40 Screen Time", "-45 Screen Time", "-50 Screen Time", "-55 Screen Time", "-60 Screen Time"];
             let currentRotation = 0;
             let spinAnimation;
             let statistics = {};
@@ -1445,8 +1445,10 @@ h1, h2 {
                         updateHistory(consequence);
                         
                         // Display result with dramatic effects
+                        console.log('Setting result text to:', consequence);
                         resultText.textContent = consequence;
                         resultText.classList.add('consequence');
+                        console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
                         setTimeout(() => resultText.classList.remove('consequence'), 1500);
                         
                         // Dramatic celebration effects

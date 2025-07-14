@@ -854,7 +854,9 @@ h1, h2 {
                     const resultText = document.getElementById('resultText');
                     resultDiv.classList.add('winner');
                     resultText.classList.add('winner');
+                    console.log('Setting result text to:', options[winningIndex]);
                     resultText.textContent = `${options[winningIndex]}`;
+                    console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
 
                     // Trigger over-the-top celebration!
                     const duration = 3000;

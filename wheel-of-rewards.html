@@ -1060,7 +1060,7 @@ h1, h2 {
             
             let tickInterval = null;
             let isSpinning = false;
-            let options = ["+15 min Screen Time", "+30 min Screen Time", "+35 min Screen Time", "+15 min Screen Time", "+30 min Screen Time", "Free Spin", "+45 min Screen Time", "+15 min Screen Time", "+30 min Screen Time", "Jackpot $pin", "+15 min Screen Time", "+30 min Screen Time", "+45 min Screen Time", "+60 min Screen Time"];
+            let options = ["+15 Screen Time", "+30 Screen Time", "+35 Screen Time", "+15 Screen Time", "+30 Screen Time", "Free Spin", "+45 Screen Time", "+15 Screen Time", "+30 Screen Time", "Jackpot $pin", "+15 Screen Time", "+30 Screen Time", "+45 Screen Time", "+60 Screen Time"];
             let currentRotation = 0;
             let spinAnimation;
             let statistics = {};
@@ -1366,8 +1366,10 @@ h1, h2 {
                         updateHistory(winner);
                         
                         // Display result with enhanced effects
+                        console.log('Setting result text to:', winner);
                         resultText.textContent = winner;
                         resultText.classList.add('winner');
+                        console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
                         setTimeout(() => resultText.classList.remove('winner'), 1000);
                         
                         // Enhanced celebration effects
