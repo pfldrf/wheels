@@ -1138,7 +1138,7 @@ h1, h2 {
             
             let tickInterval = null;
             let isSpinning = false;
-            let options = ["-15 Screen Time", "-20 Screen Time", "-25 Screen Time", "-30 Screen Time", "-35 Screen Time", "-40 Screen Time", "-45 Screen Time", "-50 Screen Time", "-55 Screen Time", "-60 Screen Time"];
+            let options = ["-15", "-20", "-25", "-30", "-35", "-40", "-45", "-50", "-55", "-60"];
             let currentRotation = 0;
             let spinAnimation;
             let statistics = {};
@@ -1449,6 +1449,12 @@ h1, h2 {
                         const pointerAngle = -Math.PI/2; // 12 o'clock position
                         const relativeAngle = (pointerAngle - normalizedRotation + 2 * Math.PI) % (2 * Math.PI);
                         const winningIndex = Math.floor(relativeAngle / segmentAngle) % options.length;
+                        
+                        console.log('Debug - options length:', options.length);
+                        console.log('Debug - winningIndex:', winningIndex);
+                        console.log('Debug - options array:', options);
+                        console.log('Debug - selected option:', options[winningIndex]);
+                        
                         const consequence = options[winningIndex];
                         
                         // Update statistics and history
