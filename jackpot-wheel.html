@@ -70,6 +70,11 @@
     100% { transform: rotate(360deg); }
 }
 
+@keyframes cyclingGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
 .main-content {
     opacity: 1;
 }
@@ -627,6 +632,15 @@ h1, h2 {
     box-shadow: 0 0 10px var(--primary-color);
 }
 
+.theme-btn.cycling { 
+    background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #f368e0);
+    background-size: 200% 200%;
+    animation: cyclingGradient 3s ease infinite;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .theme-btn.light { background: linear-gradient(45deg, #f4f4f4, #ffffff); }
 .theme-btn.dark { background: linear-gradient(45deg, #1a1a1a, #2d2d2d); }
 .theme-btn.neon { background: linear-gradient(45deg, #0a0a0a, #00ffff, #ff00ff); }
@@ -871,6 +885,7 @@ h1, h2 {
 
     <!-- Theme Buttons -->
     <div class="theme-buttons">
+        <div class="theme-btn cycling" data-theme="cycling" title="Cycling Themes">🎨</div>
         <div class="theme-btn light" data-theme="light" title="Light Theme"></div>
         <div class="theme-btn dark" data-theme="dark" title="Dark Theme"></div>
         <div class="theme-btn neon" data-theme="neon" title="Neon Theme"></div>
@@ -1568,13 +1583,7 @@ h1, h2 {
             drawWheel(currentRotation);
         }
         
-        // Initialize theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            setTheme(savedTheme);
-        } else {
-            setTheme('light', false); // Don't save to storage initially
-        }
+        // Theme initialization is now handled in the cycling section below
         
         // Theme button event listeners
         themeButtons.forEach(btn => {
@@ -1588,20 +1597,24 @@ h1, h2 {
         const themes = ['light', 'dark', 'neon', 'cosmic', 'retro'];
         let currentThemeIndex = 0;
         let themeCycleInterval;
-        let isCycling = true;
+        let isCycling = false;
         
         function startThemeCycle() {
             if (themeCycleInterval) return;
             
+            console.log('Starting theme cycle...');
+            isCycling = true;
             themeCycleInterval = setInterval(() => {
                 if (isCycling) {
                     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-                    setTheme(themes[currentThemeIndex]);
+                    console.log('Cycling to theme:', themes[currentThemeIndex]);
+                    setTheme(themes[currentThemeIndex], false);
                 }
             }, 3000); // Change theme every 3 seconds
         }
         
         function stopThemeCycle() {
+            console.log('Stopping theme cycle...');
             isCycling = false;
             if (themeCycleInterval) {
                 clearInterval(themeCycleInterval);
@@ -1609,13 +1622,30 @@ h1, h2 {
             }
         }
         
-        // Start cycling if no theme was previously saved
-        if (!savedTheme) {
-            startThemeCycle();
-        } else {
-            // If user had a saved theme, don't cycle automatically
-            isCycling = false;
-        }
+        // Modified setTheme function to handle cycling
+        const originalSetTheme = setTheme;
+        setTheme = function(themeName, saveToStorage = true) {
+            if (themeName === 'cycling') {
+                console.log('Setting theme to cycling mode...');
+                stopThemeCycle();
+                startThemeCycle();
+                if (saveToStorage) {
+                    localStorage.setItem('theme', 'cycling');
+                }
+                // Update active theme button
+                themeButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector('[data-theme="cycling"]').classList.add('active');
+            } else {
+                console.log('Setting theme to:', themeName);
+                stopThemeCycle();
+                originalSetTheme(themeName, saveToStorage);
+            }
+        };
+        
+        // Initialize theme - default to cycling
+        const savedTheme = localStorage.getItem('theme') || 'cycling';
+        console.log('Initializing with theme:', savedTheme);
+        setTheme(savedTheme);
         
 
 
