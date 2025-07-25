@@ -1394,12 +1394,34 @@ h1, h2 {
                         updateStatistics();
                         updateHistory(winner);
                         
-                        // Display result with enhanced effects
+                        // Display result with enhanced effects and matching wheel slice color
                         console.log('Setting result text to:', winner);
+                        
+                        // Get the winning color and apply it to the result
+                        const colors = getCurrentColors();
+                        const winningColor = colors[winningIndex % colors.length];
+                        const resultDiv = document.getElementById('result');
+                        
+                        // Store the winning index and color for dynamic updates
+                        lastWinningIndex = winningIndex;
+                        lastWinningColor = winningColor;
+                        
+                        // Set the result background to match the winning wheel slice
+                        resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
+                        resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
+                        resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor).r}, ${hexToRgb(winningColor).g}, ${hexToRgb(winningColor).b}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                        
+                        resultDiv.classList.add('winner');
                         resultText.textContent = winner;
                         resultText.classList.add('winner');
+                        resultText.style.color = '#ffffff';
+                        resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
+                        
                         console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
-                        setTimeout(() => resultText.classList.remove('winner'), 1000);
+                        setTimeout(() => {
+                            resultText.classList.remove('winner');
+                            resultDiv.classList.remove('winner');
+                        }, 1000);
                         
                         // Enhanced celebration effects
                         setTimeout(() => {
@@ -1449,6 +1471,9 @@ h1, h2 {
                 
                 // Redraw wheel with new colors
                 drawWheel(currentRotation);
+                
+                // Update result color if there's a winning result
+                updateResultColor();
             }
             
             // Theme initialization is now handled in the cycling section below
@@ -1542,6 +1567,9 @@ h1, h2 {
             
             // Redraw wheel with new colors
             drawWheel(currentRotation);
+            
+            // Update result color if there's a winning result
+            updateResultColor();
             
             console.log('Theme applied:', themeName, 'Data theme attribute:', document.documentElement.getAttribute('data-theme'));
         }
@@ -1723,6 +1751,50 @@ h1, h2 {
             introSound.addEventListener('error', (e) => {
                 console.error('Audio loading error:', e);
             });
+            
+            // === COLOR HELPER FUNCTIONS ===
+            function adjustBrightness(hex, percent) {
+                const num = parseInt(hex.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) + amt;
+                const G = (num >> 8 & 0x00FF) + amt;
+                const B = (num & 0x0000FF) + amt;
+                return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+            }
+            
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+            
+            // === DYNAMIC RESULT COLOR MANAGEMENT ===
+            let lastWinningIndex = -1;
+            let lastWinningColor = null;
+            
+            function updateResultColor() {
+                if (lastWinningIndex >= 0 && lastWinningColor) {
+                    const resultDiv = document.getElementById('result');
+                    const resultText = document.getElementById('resultText');
+                    
+                    // Get current colors for the theme
+                    const colors = getCurrentColors();
+                    const currentWinningColor = colors[lastWinningIndex % colors.length];
+                    
+                    // Update the result background to match the current winning slice color
+                    resultDiv.style.background = `linear-gradient(135deg, ${currentWinningColor}, ${adjustBrightness(currentWinningColor, -20)})`;
+                    resultDiv.style.borderColor = adjustBrightness(currentWinningColor, 20);
+                    resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(currentWinningColor).r}, ${hexToRgb(currentWinningColor).g}, ${hexToRgb(currentWinningColor).b}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                    
+                    resultText.style.color = '#ffffff';
+                    resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
+                }
+            }
             
             // === INITIAL SETUP ===
             updateOptionsList();

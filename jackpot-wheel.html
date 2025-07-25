@@ -1401,10 +1401,14 @@ h1, h2 {
                     const resultText = document.getElementById('resultText');
                     const winningColor = colors[winningIndex % colors.length];
                     
+                    // Store the winning index and color for dynamic updates
+                    lastWinningIndex = winningIndex;
+                    lastWinningColor = winningColor;
+                    
                     // Set the result background to match the winning wheel slice
                     resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
                     resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
-                    resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                    resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor).r}, ${hexToRgb(winningColor).g}, ${hexToRgb(winningColor).b}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
                     
                     resultDiv.classList.add('winner');
                     resultText.classList.add('winner');
@@ -1432,16 +1436,8 @@ h1, h2 {
                     spinBtn.classList.remove('spinning');
                     spinBtn.textContent = 'SPIN';
                     
-                    // Reset result styling after animation
-                    setTimeout(() => {
-                        resultDiv.classList.remove('winner');
-                        resultText.classList.remove('winner');
-                        resultDiv.style.background = '';
-                        resultDiv.style.borderColor = '';
-                        resultDiv.style.boxShadow = '';
-                        resultText.style.color = '';
-                        resultText.style.textShadow = '';
-                    }, 2000);
+                    // Keep the result styling persistent (don't reset after animation)
+                    // The color will update dynamically when themes change
                 }
             }
             
@@ -1581,6 +1577,9 @@ h1, h2 {
             
             // Redraw wheel with new colors
             drawWheel(currentRotation);
+            
+            // Update result color if there's a winning result
+            updateResultColor();
         }
         
         // Theme initialization is now handled in the cycling section below
@@ -1653,6 +1652,9 @@ h1, h2 {
             
             // Redraw wheel with new colors
             drawWheel(currentRotation);
+            
+            // Update result color if there's a winning result
+            updateResultColor();
         }
         
         // Initialize theme - default to cycling
@@ -1723,9 +1725,32 @@ h1, h2 {
         startTimerBtn.addEventListener('click', startTimer);
         stopTimerBtn.addEventListener('click', stopTimer);
         resetTimerBtn.addEventListener('click', resetTimer);
+        
+        // === DYNAMIC RESULT COLOR MANAGEMENT ===
+        let lastWinningIndex = -1;
+        let lastWinningColor = null;
+        
+        function updateResultColor() {
+            if (lastWinningIndex >= 0 && lastWinningColor) {
+                const resultDiv = document.getElementById('result');
+                const resultText = document.getElementById('resultText');
+                
+                // Get current colors for the theme
+                const colors = getCurrentColors();
+                const currentWinningColor = colors[lastWinningIndex % colors.length];
+                
+                // Update the result background to match the current winning slice color
+                resultDiv.style.background = `linear-gradient(135deg, ${currentWinningColor}, ${adjustBrightness(currentWinningColor, -20)})`;
+                resultDiv.style.borderColor = adjustBrightness(currentWinningColor, 20);
+                resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(currentWinningColor).r}, ${hexToRgb(currentWinningColor).g}, ${hexToRgb(currentWinningColor).b}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                
+                resultText.style.color = '#ffffff';
+                resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
+            }
+        }
+        
     }); // End of DOMContentLoaded listener
     </script>
     </div> <!-- End main content -->
-</script>
 </body>
 </html>
