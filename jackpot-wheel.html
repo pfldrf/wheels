@@ -74,7 +74,7 @@
     opacity: 1;
 }
 
-/* Add dark mode styles */
+/* Enhanced Visual Themes */
 :root {
     --bg-color: #f4f4f4;
     --container-bg: #fff;
@@ -87,6 +87,12 @@
     --scrollbar-track: #f1f1f1;
     --scrollbar-thumb: #888;
     --scrollbar-thumb-hover: #555;
+    --primary-color: #2ecc71;
+    --primary-color-rgb: 46, 204, 113;
+    --secondary-color: #3498db;
+    --secondary-color-rgb: 52, 152, 219;
+    --accent-color: #e74c3c;
+    --accent-color-rgb: 231, 76, 60;
 }
 
 [data-theme="dark"] {
@@ -101,6 +107,72 @@
     --scrollbar-track: #2d2d2d;
     --scrollbar-thumb: #666;
     --scrollbar-thumb-hover: #888;
+    --primary-color: #2ecc71;
+    --primary-color-rgb: 46, 204, 113;
+    --secondary-color: #3498db;
+    --secondary-color-rgb: 52, 152, 219;
+    --accent-color: #e74c3c;
+    --accent-color-rgb: 231, 76, 60;
+}
+
+[data-theme="neon"] {
+    --bg-color: #0a0a0a;
+    --container-bg: #1a1a1a;
+    --text-color: #00ffff;
+    --border-color: #ff00ff;
+    --input-bg: #1a1a1a;
+    --input-border: #ff00ff;
+    --list-bg: #1a1a1a;
+    --list-hover: #2a2a2a;
+    --scrollbar-track: #1a1a1a;
+    --scrollbar-thumb: #00ffff;
+    --scrollbar-thumb-hover: #ff00ff;
+    --primary-color: #00ffff;
+    --primary-color-rgb: 0, 255, 255;
+    --secondary-color: #ff00ff;
+    --secondary-color-rgb: 255, 0, 255;
+    --accent-color: #ffff00;
+    --accent-color-rgb: 255, 255, 0;
+}
+
+[data-theme="cosmic"] {
+    --bg-color: #0c0c2c;
+    --container-bg: #1a1a3a;
+    --text-color: #4a9eff;
+    --border-color: #9a4aff;
+    --input-bg: #1a1a3a;
+    --input-border: #9a4aff;
+    --list-bg: #1a1a3a;
+    --list-hover: #2a2a4a;
+    --scrollbar-track: #1a1a3a;
+    --scrollbar-thumb: #4a9eff;
+    --scrollbar-thumb-hover: #9a4aff;
+    --primary-color: #4a9eff;
+    --primary-color-rgb: 74, 158, 255;
+    --secondary-color: #9a4aff;
+    --secondary-color-rgb: 154, 74, 255;
+    --accent-color: #ff4a9e;
+    --accent-color-rgb: 255, 74, 158;
+}
+
+[data-theme="retro"] {
+    --bg-color: #2d1b2e;
+    --container-bg: #3d2b3e;
+    --text-color: #ff6b9d;
+    --border-color: #ffa726;
+    --input-bg: #3d2b3e;
+    --input-border: #ffa726;
+    --list-bg: #3d2b3e;
+    --list-hover: #4d3b4e;
+    --scrollbar-track: #3d2b3e;
+    --scrollbar-thumb: #ff6b9d;
+    --scrollbar-thumb-hover: #ffa726;
+    --primary-color: #ff6b9d;
+    --primary-color-rgb: 255, 107, 157;
+    --secondary-color: #ffa726;
+    --secondary-color-rgb: 255, 167, 38;
+    --accent-color: #9dff6b;
+    --accent-color-rgb: 157, 255, 107;
 }
 
 body {
@@ -348,45 +420,134 @@ h1, h2 {
     width: 100%;
     max-width: 400px;
     text-align: center;
-    background-color: #eafaf1;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #a9dfbf;
+    background: linear-gradient(135deg, var(--container-bg), var(--list-bg));
+    padding: 25px 20px;
+    border-radius: 20px;
+    border: 3px solid var(--border-color);
     margin-top: 20px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+#result::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+#result:hover::before {
+    left: 100%;
 }
 
 #result.winner {
-    animation: winnerPulse 1s ease-in-out;
-    background: linear-gradient(45deg, #eafaf1, #a9dfbf);
-    border-color: #2ecc71;
-    box-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+    animation: winnerPulse 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: var(--accent-color);
+    box-shadow: 
+        0 0 30px rgba(var(--primary-color-rgb, 46, 204, 113), 0.4),
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
 }
 
-#resultText {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #145a32;
-    min-height: 1.5em;
+#result h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.8;
     transition: all 0.3s ease;
 }
 
+#result.winner h2 {
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#resultText {
+    font-size: 2.2em;
+    font-weight: 800;
+    color: var(--text-color);
+    min-height: 1.5em;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 #resultText.winner {
-    animation: winnerText 1s ease-in-out;
-    color: #1e8449;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    animation: winnerText 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    color: #ffffff;
+    text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 @keyframes winnerPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    25% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 40px rgba(var(--primary-color-rgb, 46, 204, 113), 0.6);
+    }
+    50% { 
+        transform: scale(1.02);
+        box-shadow: 0 0 50px rgba(var(--primary-color-rgb, 46, 204, 113), 0.8);
+    }
+    75% { 
+        transform: scale(1.08);
+        box-shadow: 0 0 60px rgba(var(--primary-color-rgb, 46, 204, 113), 0.6);
+    }
+    100% { 
+        transform: scale(1.02);
+        box-shadow: 0 0 30px rgba(var(--primary-color-rgb, 46, 204, 113), 0.4);
+    }
 }
 
 @keyframes winnerText {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% { 
+        transform: scale(1);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    25% { 
+        transform: scale(1.2);
+        text-shadow: 0 0 30px rgba(255, 255, 255, 1);
+    }
+    50% { 
+        transform: scale(1.15);
+        text-shadow: 0 0 40px rgba(255, 255, 255, 1);
+    }
+    75% { 
+        transform: scale(1.25);
+        text-shadow: 0 0 50px rgba(255, 255, 255, 1);
+    }
+    100% { 
+        transform: scale(1.1);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    }
 }
 
 /* Make it responsive */
@@ -425,6 +586,53 @@ h1, h2 {
     }
 }
 
+/* Particle Canvas */
+#particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Theme Buttons */
+.theme-buttons {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1001;
+}
+
+.theme-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.theme-btn.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+.theme-btn.light { background: linear-gradient(45deg, #f4f4f4, #ffffff); }
+.theme-btn.dark { background: linear-gradient(45deg, #1a1a1a, #2d2d2d); }
+.theme-btn.neon { background: linear-gradient(45deg, #0a0a0a, #00ffff, #ff00ff); }
+.theme-btn.cosmic { background: linear-gradient(45deg, #0c0c2c, #4a9eff, #9a4aff); }
+.theme-btn.retro { background: linear-gradient(45deg, #2d1b2e, #ff6b9d, #ffa726); }
+
 /* Theme toggle button */
 .theme-toggle {
     position: fixed;
@@ -448,6 +656,71 @@ h1, h2 {
 .theme-toggle:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Statistics and History Sections */
+.stats-section, .history-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--list-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stats-section h3, .history-section h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    font-size: 1.1em;
+}
+
+.stats-list, .history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--list-bg);
+}
+
+.stats-list li, .history-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.stats-list li:hover, .history-list li:hover {
+    background-color: var(--list-hover);
+}
+
+.stats-list li:last-child, .history-list li:last-child {
+    border-bottom: none;
+}
+
+.stats-list span, .history-list span {
+    flex-grow: 1;
+    text-align: left;
+    margin-right: 10px;
+    word-break: break-word;
+}
+
+.stats-list .count {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.history-list .time {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.8em;
 }
 
 /* Add timer styles */
@@ -559,6 +832,22 @@ h1, h2 {
                 <ul id="optionsList">
                     <!-- Options will be listed here -->
                 </ul>
+                
+                <!-- Statistics Section -->
+                <div class="stats-section">
+                    <h3>Statistics</h3>
+                    <ul class="stats-list" id="statsList">
+                        <li><span>No spins yet</span></li>
+                    </ul>
+                </div>
+                
+                <!-- History Section -->
+                <div class="history-section">
+                    <h3>Spin History</h3>
+                    <ul class="history-list" id="historyList">
+                        <li><span>No history yet</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -577,6 +866,18 @@ h1, h2 {
     <!-- Add theme toggle button -->
     <button class="theme-toggle" id="themeToggle">🌙</button>
 
+    <!-- Particle Canvas for effects -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Theme Buttons -->
+    <div class="theme-buttons">
+        <div class="theme-btn light" data-theme="light" title="Light Theme"></div>
+        <div class="theme-btn dark" data-theme="dark" title="Dark Theme"></div>
+        <div class="theme-btn neon" data-theme="neon" title="Neon Theme"></div>
+        <div class="theme-btn cosmic" data-theme="cosmic" title="Cosmic Theme"></div>
+        <div class="theme-btn retro" data-theme="retro" title="Retro Theme"></div>
+    </div>
+
     <!-- Add audio elements -->
     <audio id="introSound" preload="auto" src="wheel-intro.mp3" type="audio/mpeg"></audio>
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
@@ -585,11 +886,135 @@ h1, h2 {
     <!-- Add confetti library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-    <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
+        
+        // === PARTICLE SYSTEM ===
+        class ParticleSystem {
+            constructor() {
+                this.canvas = document.getElementById('particleCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.isRunning = false;
+                this.setupCanvas();
+                
+                // Create initial particles
+                const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0', '#ff9f43', '#54a0ff', '#5f27cd'];
+                for (let i = 0; i < 20; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        size: Math.random() * 3 + 1,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        life: 1,
+                        decay: Math.random() * 0.02 + 0.005
+                    });
+                }
+            }
+            
+            setupCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            createSparkles(x, y) {
+                const count = 10;
+                for (let i = 0; i < count; i++) {
+                    this.particles.push({
+                        x: x + (Math.random() - 0.5) * 50,
+                        y: y + (Math.random() - 0.5) * 50,
+                        vx: (Math.random() - 0.5) * 8,
+                        vy: (Math.random() - 0.5) * 8,
+                        size: Math.random() * 4 + 2,
+                        color: '#ffff00',
+                        life: 1,
+                        decay: Math.random() * 0.03 + 0.01
+                    });
+                }
+            }
+            
+            createFireworks(x, y) {
+                const count = 30;
+                for (let i = 0; i < count; i++) {
+                    const angle = (Math.PI * 2 * i) / count;
+                    const speed = Math.random() * 5 + 3;
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: Math.random() * 6 + 3,
+                        color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                        life: 1,
+                        decay: Math.random() * 0.02 + 0.005
+                    });
+                }
+            }
+            
+            createShootingStars() {
+                for (let i = 0; i < 5; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: -20,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: Math.random() * 3 + 2,
+                        size: Math.random() * 3 + 2,
+                        color: '#ffffff',
+                        life: 1,
+                        decay: 0.005
+                    });
+                }
+            }
+            
+            update() {
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= p.decay;
+                    
+                    // Remove dead particles
+                    if (p.life <= 0 || p.x < 0 || p.x > this.canvas.width || p.y < 0 || p.y > this.canvas.height) {
+                        this.particles.splice(i, 1);
+                    }
+                }
+            }
+            
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.particles.forEach(p => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = p.life;
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+            }
+            
+            start() {
+                if (this.isRunning) return;
+                this.isRunning = true;
+                this.animate();
+            }
+            
+            stop() {
+                this.isRunning = false;
+            }
+            
+            animate() {
+                if (!this.isRunning) return;
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.animate());
+            }
+        }
         
         // Make canvas responsive
         function resizeCanvas() {
@@ -627,6 +1052,16 @@ h1, h2 {
         const tickSound = document.getElementById('tickSound');
         const winSound = document.getElementById('winSound');
         const introSound = document.getElementById('introSound');
+        const statsList = document.getElementById('statsList');
+        const historyList = document.getElementById('historyList');
+        
+        // Initialize particle system
+        const particles = new ParticleSystem();
+        
+        // Resize particle canvas on window resize
+        window.addEventListener('resize', () => {
+            particles.setupCanvas();
+        });
     
         let tickInterval = null;
     
@@ -666,9 +1101,39 @@ h1, h2 {
         let isSpinning = false;
         let currentRotation = 0;
         let spinAnimation;
+        let statistics = {};
+        let spinHistory = [];
+        
+        // Color schemes for different themes
+        const colorSchemes = {
+            light: ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0', '#ff9f43', '#54a0ff', '#5f27cd'],
+            dark: ['#e74c3c', '#f39c12', '#3498db', '#2ecc71', '#9b59b6', '#e67e22', '#1abc9c', '#34495e'],
+            neon: ['#00ffff', '#ff00ff', '#ffff00', '#00ff00', '#ff0080', '#8000ff', '#ff8000', '#00ff80'],
+            cosmic: ['#4a9eff', '#9a4aff', '#ff4a9e', '#4aff9a', '#ff9a4a', '#9a4aff', '#4a9eff', '#ff4a9e'],
+            retro: ['#ff6b9d', '#ffa726', '#9dff6b', '#6b9dff', '#ff6b9d', '#a726ff', '#26ffa7', '#ffa726']
+        };
+        
+        function getCurrentColors() {
+            const theme = document.documentElement.getAttribute('data-theme') || 'light';
+            return colorSchemes[theme] || colorSchemes.light;
+        }
+        
+        function adjustBrightness(hex, percent) {
+            const num = parseInt(hex.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
+        }
     
         // Colors for the segments (add more if needed, they will cycle)
-        const colors = ["#ff6b6b", "#feca57", "#48dbfb", "#1dd1a1", "#f368e0", "#ff9f43", "#54a0ff", "#5f27cd", "#ff6b6b", "#feca57", "#48dbfb", "#1dd1a1", "#f368e0", "#ff9f43", "#54a0ff", "#5f27cd"];
+        let colors = getCurrentColors();
     
         function drawWheel(rotation = 0) {
             const numOptions = options.length;
@@ -683,6 +1148,9 @@ h1, h2 {
                 ctx.stroke();
                 return;
             }
+
+            // Get current colors for the theme
+            colors = getCurrentColors();
 
             const arcSize = (2 * Math.PI) / numOptions;
             const radius = canvas.width / 2;
@@ -736,6 +1204,49 @@ h1, h2 {
 
             ctx.restore();
         }
+        
+        function updateStatistics() {
+            // Update statistics for current options
+            options.forEach(option => {
+                if (!statistics[option]) {
+                    statistics[option] = 0;
+                }
+            });
+            
+            // Remove statistics for options that no longer exist
+            Object.keys(statistics).forEach(key => {
+                if (!options.includes(key)) delete statistics[key];
+            });
+            
+            // Update display
+            const sorted = Object.entries(statistics).sort((a, b) => b[1] - a[1]);
+            
+            if (sorted.length === 0) {
+                statsList.innerHTML = '<li><span>No spins yet</span></li>';
+            } else {
+                statsList.innerHTML = sorted.map(([option, count]) =>
+                    `<li><span>${option}</span><span class="count">${count}</span></li>`
+                ).join('');
+            }
+        }
+        
+        function updateHistory(result) {
+            const timestamp = new Date().toLocaleTimeString();
+            spinHistory.unshift({ result, timestamp });
+            
+            // Keep only last 10 entries
+            if (spinHistory.length > 10) {
+                spinHistory = spinHistory.slice(0, 10);
+            }
+            
+            if (spinHistory.length === 0) {
+                historyList.innerHTML = '<li><span>No history yet</span></li>';
+            } else {
+                historyList.innerHTML = spinHistory.map(entry =>
+                    `<li><span>${entry.result}</span><span class="time">${entry.timestamp}</span></li>`
+                ).join('');
+            }
+        }
     
         function updateOptionsList() {
             optionsList.innerHTML = ''; // Clear existing list
@@ -786,8 +1297,14 @@ h1, h2 {
     
         function removeOption(indexToRemove) {
             if (options.length > 2) {
+                const removedOption = options[indexToRemove];
                 options.splice(indexToRemove, 1);
+                
+                // Remove from statistics
+                if (statistics[removedOption]) delete statistics[removedOption];
+                
                 updateOptionsList();
+                updateStatistics();
                 drawWheel();
                 showError(""); // Clear any previous error
             } else {
@@ -806,49 +1323,41 @@ h1, h2 {
             startTicking();
 
             // Calculate spin parameters
-            const minRotations = 10; // Increased minimum rotations
-            const maxExtraRotations = 8; // More potential extra rotations
-            const totalRotations = minRotations + Math.random() * maxExtraRotations;
-            const spinDuration = 7000; // Longer duration for more dramatic ending
-            const startTime = performance.now();
+            const spinDuration = 3000 + Math.random() * 2000; // 3-5 seconds
+            const totalRotation = 1440 + Math.random() * 1440; // 4-8 full rotations
             const startRotation = currentRotation;
-            const totalRotation = (totalRotations * Math.PI * 2) + (Math.random() * Math.PI * 2);
+            const endRotation = startRotation + totalRotation;
 
-            // Cancel any existing animation
-            if (spinAnimation) {
-                cancelAnimationFrame(spinAnimation);
-            }
+            let startTime = null;
 
-            // Animate the spin
-            function animate(currentTime) {
-                const elapsed = currentTime - startTime;
+            // Create particle effects during spin
+            const particleInterval = setInterval(() => {
+                const rect = canvas.getBoundingClientRect();
+                particles.createSparkles(
+                    rect.left + rect.width / 2,
+                    rect.top + rect.height / 2
+                );
+                particles.start();
+            }, 200);
+
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
                 const progress = Math.min(elapsed / spinDuration, 1);
                 
-                // Single smooth easing function for the entire animation
-                // Uses a custom curve that starts fast and has a long, smooth tail
-                const easeOut = 1 - Math.pow(1 - progress, 3.5);
+                // Easing function for realistic deceleration
+                const easeOut = 1 - Math.pow(1 - progress, 3);
                 
-                currentRotation = startRotation + (totalRotation * easeOut);
+                currentRotation = startRotation + (endRotation - startRotation) * easeOut;
                 drawWheel(currentRotation);
-
-                // Adjust tick sound frequency based on instantaneous speed
-                if (progress > 0.4) {  // Start slowing down ticks after 40% of the animation
-                    const speedFactor = Math.pow(1 - progress, 2.5);  // Calculate relative speed
-                    const newInterval = 175 + (1 - speedFactor) * 800;  // Map speed to interval (175ms to 975ms)
-                    if (tickInterval) {
-                        clearInterval(tickInterval);
-                        tickInterval = setInterval(() => {
-                            tickSound.currentTime = 0;
-                            tickSound.play().catch(e => console.log('Tick sound failed:', e));
-                        }, newInterval);
-                    }
-                }
 
                 if (progress < 1) {
                     spinAnimation = requestAnimationFrame(animate);
                 } else {
                     // Spin complete
                     stopTicking();
+                    clearInterval(particleInterval);
+                    
                     // Temporarily duck music for win sound
                     if (!introSound.paused) {
                         introSound.volume = 0.1;
@@ -859,82 +1368,101 @@ h1, h2 {
                     winSound.currentTime = 0;
                     winSound.play().catch(() => {});
 
-                    // Calculate winner - Accurate pointer calculation
+                    // Calculate winner
                     const normalizedRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
                     const segmentAngle = (2 * Math.PI) / options.length;
-                    
-                    // Pointer is at 12 o'clock (-π/2), segments start at 3 o'clock (0)
                     const pointerAngle = -Math.PI/2; // 12 o'clock position
                     const relativeAngle = (pointerAngle - normalizedRotation + 2 * Math.PI) % (2 * Math.PI);
                     const winningIndex = Math.floor(relativeAngle / segmentAngle) % options.length;
+                    const winner = options[winningIndex];
 
-                    // Add winner animation
+                    // Update statistics and history
+                    statistics[winner] = (statistics[winner] || 0) + 1;
+                    updateStatistics();
+                    updateHistory(winner);
+
+                    // Add winner animation with matching wheel slice color
                     const resultDiv = document.getElementById('result');
                     const resultText = document.getElementById('resultText');
+                    const winningColor = colors[winningIndex % colors.length];
+                    
+                    // Set the result background to match the winning wheel slice
+                    resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
+                    resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
+                    resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                    
                     resultDiv.classList.add('winner');
                     resultText.classList.add('winner');
-                    console.log('Setting result text to:', options[winningIndex]);
-                    resultText.textContent = `${options[winningIndex]}`;
-                    console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
+                    resultText.textContent = winner;
+                    resultText.style.color = '#ffffff';
+                    resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
 
-                    // Trigger over-the-top celebration!
-                    const duration = 3000;
-                    const animationEnd = Date.now() + duration;
-                    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+                    // Enhanced confetti celebration
+                    enhancedConfetti();
 
-                    function randomInRange(min, max) {
-                        return Math.random() * (max - min) + min;
-                    }
-
-                    const interval = setInterval(() => {
-                        const timeLeft = animationEnd - Date.now();
-
-                        if (timeLeft <= 0) {
-                            return clearInterval(interval);
-                        }
-
-                        const particleCount = 50 * (timeLeft / duration);
-
-                        // Fire confetti from multiple angles
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-                        });
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-                        });
-                        confetti({
-                            ...defaults,
-                            particleCount,
-                            origin: { x: randomInRange(0.4, 0.6), y: Math.random() - 0.2 }
-                        });
-
-                        // Add some fun shapes
-                        confetti({
-                            ...defaults,
-                            particleCount: 5,
-                            scalar: 1.2,
-                            shapes: ['star'],
-                            colors: ['#FFD700', '#FFA500', '#FF69B4'],
-                            origin: { x: randomInRange(0.3, 0.7), y: Math.random() - 0.2 }
-                        });
-                    }, 250);
-
-                    // Remove animation classes after animation completes
+                    // Particle effects for winner
+                    setTimeout(() => {
+                        const rect = canvas.getBoundingClientRect();
+                        particles.createFireworks(
+                            rect.left + rect.width / 2,
+                            rect.top + rect.height / 2
+                        );
+                        particles.createShootingStars();
+                        particles.start();
+                    }, 500);
+                    
+                    // Reset button and result styling
+                    isSpinning = false;
+                    spinBtn.disabled = false;
+                    spinBtn.classList.remove('spinning');
+                    spinBtn.textContent = 'SPIN';
+                    
+                    // Reset result styling after animation
                     setTimeout(() => {
                         resultDiv.classList.remove('winner');
                         resultText.classList.remove('winner');
-                    }, 1000);
-
-                    isSpinning = false;
-                    spinBtn.disabled = options.length < 2;
+                        resultDiv.style.background = '';
+                        resultDiv.style.borderColor = '';
+                        resultDiv.style.boxShadow = '';
+                        resultText.style.color = '';
+                        resultText.style.textShadow = '';
+                    }, 2000);
                 }
             }
-
+            
             spinAnimation = requestAnimationFrame(animate);
+        }
+        
+        function enhancedConfetti() {
+            const theme = document.documentElement.getAttribute('data-theme') || 'light';
+            let confettiColors;
+            
+            switch(theme) {
+                case 'neon':
+                    confettiColors = ['#00ffff', '#ff00ff', '#ffff00', '#00ff00'];
+                    break;
+                case 'cosmic':
+                    confettiColors = ['#4a9eff', '#9a4aff', '#ff4a9e', '#4aff9a'];
+                    break;
+                case 'retro':
+                    confettiColors = ['#ff6b9d', '#ffa726', '#9dff6b', '#6b9dff'];
+                    break;
+                default:
+                    confettiColors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1'];
+            }
+            
+            const confettiSettings = {
+                particleCount: 100,
+                spread: 360,
+                startVelocity: 30,
+                decay: 0.9,
+                gravity: 0.5,
+                colors: confettiColors,
+                shapes: ['circle', 'square'],
+                ticks: 200
+            };
+            
+            confetti(confettiSettings);
         }
 
         // --- Event Listeners ---
@@ -947,7 +1475,6 @@ h1, h2 {
         });
 
         // === ENHANCED AUDIO SYSTEM ===
-        let audioContextUnlocked = false;
         let introMusicPlayed = false;
         
         // Set up audio volumes - effects over music
@@ -988,7 +1515,7 @@ h1, h2 {
             }, 200);
         }
         
-        // Show ready state after 1.5 seconds
+        // Show ready state after 1.5 seconds, regardless of audio loading
         setTimeout(() => {
             showReadyState();
         }, 1500);
@@ -1017,57 +1544,40 @@ h1, h2 {
                 console.log('No play promise returned');
             }
         }
-        
-        // No additional interaction listeners needed - loading screen handles it all!
-        
-        // Test if audio file exists
-        introSound.addEventListener('loadstart', () => {
-            console.log('Audio loading started...');
-        });
-        
-        introSound.addEventListener('canplay', () => {
-            console.log('Audio can start playing...');
-        });
-        
-        introSound.addEventListener('error', (e) => {
-            console.error('Audio loading error:', e);
-        });
 
         // --- Initial Setup ---
         updateOptionsList();
+        updateStatistics();
         resizeCanvas();
         drawWheel();
-    </script>
-    </div> <!-- End main content -->
-
-    <script>
-        // Add theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
         
-        // Set initial theme based on system preference
-        if (prefersDarkScheme.matches) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            themeToggle.textContent = '☀️';
+        // === THEME SYSTEM ===
+        const themeButtons = document.querySelectorAll('.theme-btn');
+        
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+            
+            // Update active theme button
+            themeButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
+            
+            // Redraw wheel with new colors
+            drawWheel(currentRotation);
         }
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-            
-            // Save preference
-            localStorage.setItem('theme', newTheme);
+        
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+        
+        // Theme button event listeners
+        themeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTheme(btn.getAttribute('data-theme'));
+            });
         });
+        
 
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-        }
 
         // Add timer functionality
         const timerDisplay = document.getElementById('timerDisplay');
@@ -1131,6 +1641,8 @@ h1, h2 {
         stopTimerBtn.addEventListener('click', stopTimer);
         resetTimerBtn.addEventListener('click', resetTimer);
     }); // End of DOMContentLoaded listener
+    </script>
+    </div> <!-- End main content -->
 </script>
 </body>
 </html>
