@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Wheel Collection</title>
     <style>
         body {
@@ -26,15 +29,26 @@
         
         .container {
             text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 8s ease infinite;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            background-size: 400% 400% !important;
+            animation: gradientShift 8s ease infinite !important;
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             max-width: 700px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Mobile-specific container styling */
+        @media (max-width: 768px) {
+            .container {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                background-size: 400% 400% !important;
+                animation: gradientShift 8s ease infinite !important;
+                margin: 10px;
+                padding: 30px;
+            }
         }
         
         h1 {
@@ -159,5 +173,26 @@
             <a href="jackpot-wheel.html" class="wheel-link jackpot">💰 Jackpot Wheel</a>
         </div>
     </div>
+    
+    <script>
+        // Force background color on mobile and add debugging
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            console.log('Index page loaded');
+            console.log('User agent:', navigator.userAgent);
+            console.log('Is mobile:', isMobile);
+            console.log('Container element:', container);
+            
+            // Force the purple background
+            container.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            container.style.backgroundSize = '400% 400%';
+            container.style.animation = 'gradientShift 8s ease infinite';
+            
+            console.log('Container background set to purple gradient');
+            console.log('Container computed background:', window.getComputedStyle(container).background);
+        });
+    </script>
 </body>
 </html> 
