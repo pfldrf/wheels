@@ -282,7 +282,7 @@ body {
 .theme-btn.cycling { 
     background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #f368e0);
     background-size: 200% 200%;
-    animation: cyclingGradient 3s ease infinite;
+    animation: cyclingGradient 0.8s ease infinite;
     font-size: 16px;
     display: flex;
     align-items: center;
@@ -1478,7 +1478,7 @@ h1, h2 {
                     console.log('Cycling to theme:', themes[currentThemeIndex]);
                     setTheme(themes[currentThemeIndex], false);
                 }
-            }, 3000); // Change theme every 3 seconds
+            }, 800); // Change theme every 0.8 seconds
         }
         
         function stopThemeCycle() {
