@@ -1673,19 +1673,35 @@ h1, h2 {
             const themeButtons = document.querySelectorAll('.theme-btn');
             
             function setTheme(themeName) {
+                console.log('Setting theme to:', themeName);
+                console.log('User agent:', navigator.userAgent);
+                console.log('Is mobile:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+                
                 document.documentElement.setAttribute('data-theme', themeName);
                 localStorage.setItem('theme', themeName);
                 
+                console.log('Data theme attribute set to:', document.documentElement.getAttribute('data-theme'));
+                
                 // Update active theme button
                 themeButtons.forEach(btn => btn.classList.remove('active'));
-                document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
+                const activeButton = document.querySelector(`[data-theme="${themeName}"]`);
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                    console.log('Active theme button set:', themeName);
+                } else {
+                    console.error('Theme button not found for:', themeName);
+                    console.log('Available theme buttons:', Array.from(themeButtons).map(btn => btn.getAttribute('data-theme')));
+                }
                 
                 // Redraw wheel with new colors
                 drawWheel(currentRotation);
+                console.log('Theme applied successfully:', themeName);
             }
             
             // Initialize theme
             const savedTheme = localStorage.getItem('theme') || 'spooky';  // Default to spooky for consequences
+            console.log('Initializing theme with:', savedTheme);
+            console.log('localStorage theme value:', localStorage.getItem('theme'));
             setTheme(savedTheme);
             
             // Theme button event listeners
