@@ -6,7 +6,7 @@
     <title>Wheel Collection</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -14,38 +14,138 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f4;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
         }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
         .container {
             text-align: center;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
             width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        
         h1 {
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+        
         .wheel-links {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
+        
         .wheel-link {
             display: inline-block;
-            padding: 15px 30px;
-            background-color: #2ecc71;
-            color: white;
+            padding: 20px 40px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 15px;
             font-weight: bold;
-            transition: background-color 0.2s;
+            font-size: 1.2em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        .wheel-link:hover {
-            background-color: #27ae60;
+        
+        .wheel-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .wheel-link:hover::before {
+            left: 100%;
+        }
+        
+        /* Consequences Button - Scary/Dark */
+        .wheel-link.consequences {
+            background: linear-gradient(135deg, #8b0000, #ff4444, #a00000);
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            border-color: #660000;
+            box-shadow: 
+                0 4px 15px rgba(139, 0, 0, 0.4),
+                0 0 20px rgba(255, 68, 68, 0.3);
+        }
+        
+        .wheel-link.consequences:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(139, 0, 0, 0.6),
+                0 0 30px rgba(255, 68, 68, 0.5);
+            background: linear-gradient(135deg, #a00000, #ff6666, #cc0000);
+        }
+        
+        .wheel-link.consequences:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Rewards Button - Fun/Happy */
+        .wheel-link.rewards {
+            background: linear-gradient(135deg, #2ecc71, #3498db, #f39c12);
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border-color: #27ae60;
+            box-shadow: 
+                0 4px 15px rgba(46, 204, 113, 0.4),
+                0 0 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .wheel-link.rewards:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(46, 204, 113, 0.6),
+                0 0 30px rgba(52, 152, 219, 0.5);
+            background: linear-gradient(135deg, #27ae60, #2980b9, #e67e22);
+        }
+        
+        .wheel-link.rewards:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Jackpot Button - Exciting */
+        .wheel-link.jackpot {
+            background: linear-gradient(135deg, #ffd700, #ff6b35, #ff8c42);
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            border-color: #ffa500;
+            box-shadow: 
+                0 4px 15px rgba(255, 215, 0, 0.4),
+                0 0 20px rgba(255, 107, 53, 0.3);
+        }
+        
+        .wheel-link.jackpot:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(255, 215, 0, 0.6),
+                0 0 30px rgba(255, 107, 53, 0.5);
+            background: linear-gradient(135deg, #ffed4e, #ff5722, #ff7043);
+        }
+        
+        .wheel-link.jackpot:active {
+            transform: translateY(-1px) scale(0.98);
         }
     </style>
 </head>
@@ -53,9 +153,9 @@
     <div class="container">
         <h1>Choose Your Wheel</h1>
         <div class="wheel-links">
-            <a href="wheel-of-consequences.html" class="wheel-link">Wheel of Consequences</a>
-            <a href="wheel-of-rewards.html" class="wheel-link">Wheel of Rewards</a>
-            <a href="jackpot-wheel.html" class="wheel-link">Jackpot Wheel</a>
+            <a href="wheel-of-consequences.html" class="wheel-link consequences">💀 Wheel of Consequences</a>
+            <a href="wheel-of-rewards.html" class="wheel-link rewards">🎁 Wheel of Rewards</a>
+            <a href="jackpot-wheel.html" class="wheel-link jackpot">💰 Jackpot Wheel</a>
         </div>
     </div>
 </body>
