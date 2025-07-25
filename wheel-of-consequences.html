@@ -1698,12 +1698,22 @@ h1, h2 {
                 console.log('Theme applied successfully:', themeName);
             }
             
-            // Initialize theme - default to spooky (red) for consequences
+            // Initialize theme - default to spooky (red) for consequences, especially on mobile
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const savedTheme = localStorage.getItem('theme') || 'spooky';  // Default to spooky for consequences
+            let savedTheme = localStorage.getItem('theme');
+            
+            // On mobile, always default to spooky theme if no theme is saved
+            if (isMobile && !savedTheme) {
+                savedTheme = 'spooky';
+                console.log('Mobile detected, forcing spooky theme as default');
+            } else if (!savedTheme) {
+                savedTheme = 'spooky';  // Default to spooky for consequences on desktop too
+            }
+            
             console.log('Initializing theme with:', savedTheme);
             console.log('Is mobile:', isMobile);
             console.log('localStorage theme value:', localStorage.getItem('theme'));
+            console.log('Final theme to be applied:', savedTheme);
             setTheme(savedTheme);
             
             // Theme button event listeners
