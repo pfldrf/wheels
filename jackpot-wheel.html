@@ -1417,9 +1417,35 @@ h1, h2 {
                     lastWinningColor = winningColor;
                     
                     // Set the result background to match the winning wheel slice
-                    resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
-                    resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
-                    resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor).r}, ${hexToRgb(winningColor).g}, ${hexToRgb(winningColor).b}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                    const backgroundGradient = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
+                    const borderColor = adjustBrightness(winningColor, 20);
+                    const boxShadow = `0 0 30px rgba(${hexToRgb(winningColor).r}, ${hexToRgb(winningColor).g}, ${hexToRgb(winningColor).b}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                    
+                    console.log('Setting result styling:', {
+                        backgroundGradient,
+                        borderColor,
+                        boxShadow,
+                        winningColor
+                    });
+                    
+                    resultDiv.style.background = backgroundGradient;
+                    resultDiv.style.borderColor = borderColor;
+                    resultDiv.style.boxShadow = boxShadow;
+                    
+                    // Force mobile browsers to apply the background
+                    if (isMobileDevice) {
+                        console.log('Mobile detected, forcing background application...');
+                        resultDiv.style.backgroundImage = backgroundGradient;
+                        resultDiv.style.backgroundSize = '100% 100%';
+                        resultDiv.style.backgroundRepeat = 'no-repeat';
+                        resultDiv.style.backgroundPosition = 'center';
+                        
+                        // Force a reflow for the background
+                        resultDiv.offsetHeight;
+                        resultDiv.style.transform = 'translateZ(0)';
+                        resultDiv.offsetHeight;
+                        resultDiv.style.transform = '';
+                    }
                     
                     resultDiv.classList.add('winner');
                     resultText.classList.add('winner');
@@ -1433,14 +1459,55 @@ h1, h2 {
                     resultText.offsetHeight;
                     resultText.style.display = '';
                     
+                    // Additional mobile-specific force updates
+                    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    if (isMobileDevice) {
+                        console.log('Mobile detected, applying additional force updates...');
+                        // Force multiple updates to ensure mobile browsers pick up the change
+                        resultText.textContent = winner;
+                        resultText.innerHTML = winner;
+                        resultText.innerText = winner;
+                        
+                        // Force a second reflow
+                        resultText.offsetHeight;
+                        resultText.style.visibility = 'hidden';
+                        resultText.offsetHeight;
+                        resultText.style.visibility = 'visible';
+                        
+                        // Force the parent container to update
+                        resultDiv.offsetHeight;
+                        resultDiv.style.transform = 'translateZ(0)';
+                        resultDiv.offsetHeight;
+                        resultDiv.style.transform = '';
+                    }
+                    
                     // Double-check the text content is set correctly
                     setTimeout(() => {
                         if (resultText.textContent !== winner) {
                             console.log('Text content mismatch detected, fixing...');
                             resultText.textContent = winner;
                             resultText.innerHTML = winner;
+                            resultText.innerText = winner;
                         }
                     }, 100);
+                    
+                    // Additional mobile-specific timeout for stubborn browsers
+                    if (isMobileDevice) {
+                        setTimeout(() => {
+                            console.log('Mobile timeout check - forcing result display...');
+                            resultText.textContent = winner;
+                            resultText.innerHTML = winner;
+                            resultText.innerText = winner;
+                            
+                            // Force one more reflow
+                            resultText.offsetHeight;
+                            resultText.style.display = 'none';
+                            resultText.offsetHeight;
+                            resultText.style.display = '';
+                            
+                            console.log('Final result text content:', resultText.textContent);
+                        }, 500);
+                    }
                     
                     console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
                     console.log('Result text content after assignment:', resultText.textContent);
