@@ -1424,24 +1424,12 @@ h1, h2 {
                         resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
                         
                         console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
-                        setTimeout(() => {
-                            resultText.classList.remove('winner');
-                            resultDiv.classList.remove('winner');
-                        }, 1000);
                         
-                        // Enhanced celebration effects
+                        // Enhanced confetti celebration
+                        enhancedConfetti();
+
+                        // Particle effects for winner
                         setTimeout(() => {
-                            enhancedConfetti();
-                            // Temporarily duck music for win sound
-                            if (!introSound.paused) {
-                                introSound.volume = 0.1;
-                                setTimeout(() => {
-                                    if (!introSound.paused) introSound.volume = 0.3;
-                                }, 2000);
-                            }
-                            winSound.play().catch(() => {});
-                            
-                            // Add fireworks and shooting stars
                             const rect = canvas.getBoundingClientRect();
                             particles.createFireworks(
                                 rect.left + rect.width / 2,
@@ -1451,11 +1439,14 @@ h1, h2 {
                             particles.start();
                         }, 500);
                         
-                        // Reset button
+                        // Reset button and result styling
                         isSpinning = false;
                         spinBtn.disabled = false;
                         spinBtn.classList.remove('spinning');
                         spinBtn.textContent = 'SPIN';
+                        
+                        // Keep the result styling persistent (don't reset after animation)
+                        // The color will update dynamically when themes change
                     }
                 }
                 
@@ -1817,6 +1808,39 @@ h1, h2 {
                     resultText.style.color = '#ffffff';
                     resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
                 }
+            }
+            
+            // === ENHANCED CONFETTI FUNCTION ===
+            function enhancedConfetti() {
+                const theme = document.documentElement.getAttribute('data-theme') || 'light';
+                let confettiColors;
+                
+                switch(theme) {
+                    case 'neon':
+                        confettiColors = ['#00ffff', '#ff00ff', '#ffff00', '#00ff00'];
+                        break;
+                    case 'cosmic':
+                        confettiColors = ['#4a9eff', '#9a4aff', '#ff4a9e', '#4aff9a'];
+                        break;
+                    case 'retro':
+                        confettiColors = ['#ff6b9d', '#ffa726', '#9dff6b', '#6b9dff'];
+                        break;
+                    default:
+                        confettiColors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1'];
+                }
+                
+                const confettiSettings = {
+                    particleCount: 100,
+                    spread: 360,
+                    startVelocity: 30,
+                    decay: 0.9,
+                    gravity: 0.5,
+                    colors: confettiColors,
+                    shapes: ['circle', 'square'],
+                    ticks: 200
+                };
+                
+                confetti(confettiSettings);
             }
             
             // === INITIAL SETUP ===
