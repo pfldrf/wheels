@@ -1547,6 +1547,40 @@ h1, h2 {
                 spinBtn.classList.add('spinning');
                 spinBtn.textContent = 'SPINNING...';
                 
+                // Reset result area completely for new spin
+                const resultDiv = document.getElementById('result');
+                const resultText = document.getElementById('resultText');
+                
+                // Clear any previous result styling
+                resultDiv.classList.remove('winner');
+                resultText.classList.remove('winner');
+                resultText.classList.remove('consequence');
+                resultDiv.style.background = '';
+                resultDiv.style.borderColor = '';
+                resultDiv.style.boxShadow = '';
+                resultText.style.color = '';
+                resultText.style.textShadow = '';
+                resultText.style.background = '';
+                resultText.style.border = '';
+                
+                // Force mobile browsers to clear the styling
+                const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if (isMobileDevice) {
+                    console.log('Mobile detected, forcing result reset...');
+                    resultDiv.style.backgroundImage = '';
+                    resultDiv.style.backgroundSize = '';
+                    resultDiv.style.backgroundRepeat = '';
+                    resultDiv.style.backgroundPosition = '';
+                    resultDiv.style.transform = '';
+                    resultText.style.transform = '';
+                    resultText.style.visibility = '';
+                    resultText.style.opacity = '';
+                    
+                    // Force reflow to ensure reset is applied
+                    resultDiv.offsetHeight;
+                    resultText.offsetHeight;
+                }
+                
                 const spinDuration = 3000 + Math.random() * 2000; // 3-5 seconds
                 const totalRotation = 1440 + Math.random() * 1440; // 4-8 full rotations
                 const startRotation = currentRotation;
@@ -1606,35 +1640,134 @@ h1, h2 {
                         
                         // Display result with enhanced effects and matching wheel slice color
                         console.log('Setting result text to:', consequence);
+                        console.log('User agent:', navigator.userAgent);
+                        console.log('Is mobile:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
                         
                         // Get the winning color and apply it to the result
                         const colors = getCurrentColors();
                         const winningColor = colors[winningIndex % colors.length];
                         const resultDiv = document.getElementById('result');
+                        const resultText = document.getElementById('resultText');
+                        
+                        console.log('Result elements found:', {
+                            resultDiv: resultDiv,
+                            resultText: resultText,
+                            consequence: consequence,
+                            winningColor: winningColor
+                        });
                         
                         // Set the result background to match the winning wheel slice
-                        resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
-                        resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
-                        resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                        const backgroundGradient = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
+                        const borderColor = adjustBrightness(winningColor, 20);
+                        const boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                        
+                        console.log('Setting result styling:', {
+                            backgroundGradient,
+                            borderColor,
+                            boxShadow,
+                            winningColor
+                        });
+                        
+                        resultDiv.style.background = backgroundGradient;
+                        resultDiv.style.borderColor = borderColor;
+                        resultDiv.style.boxShadow = boxShadow;
+                        
+                        // Force mobile browsers to apply the background
+                        if (isMobileDevice) {
+                            console.log('Mobile detected, forcing background application...');
+                            resultDiv.style.backgroundImage = backgroundGradient;
+                            resultDiv.style.backgroundSize = '100% 100%';
+                            resultDiv.style.backgroundRepeat = 'no-repeat';
+                            resultDiv.style.backgroundPosition = 'center';
+                            
+                            // Force a reflow for the background
+                            resultDiv.offsetHeight;
+                            resultDiv.style.transform = 'translateZ(0)';
+                            resultDiv.offsetHeight;
+                            resultDiv.style.transform = '';
+                        }
                         
                         resultDiv.classList.add('winner');
-                        resultText.textContent = consequence;
                         resultText.classList.add('consequence');
+                        resultText.textContent = consequence;
                         resultText.style.color = '#ffffff';
                         resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
                         
+                        // Force a reflow to ensure the text update is visible on mobile
+                        resultText.offsetHeight;
+                        resultText.style.display = 'none';
+                        resultText.offsetHeight;
+                        resultText.style.display = '';
+                        
+                        // Additional mobile-specific force updates
+                        if (isMobileDevice) {
+                            console.log('Mobile detected, applying additional force updates...');
+                            // Force multiple updates to ensure mobile browsers pick up the change
+                            resultText.textContent = consequence;
+                            resultText.innerHTML = consequence;
+                            resultText.innerText = consequence;
+                            
+                            // Force a second reflow
+                            resultText.offsetHeight;
+                            resultText.style.visibility = 'hidden';
+                            resultText.offsetHeight;
+                            resultText.style.visibility = 'visible';
+                            
+                            // Force the parent container to update
+                            resultDiv.offsetHeight;
+                            resultDiv.style.transform = 'translateZ(0)';
+                            resultDiv.offsetHeight;
+                            resultDiv.style.transform = '';
+                        }
+                        
+                        // Double-check the text content is set correctly
+                        setTimeout(() => {
+                            if (resultText.textContent !== consequence) {
+                                console.log('Text content mismatch detected, fixing...');
+                                resultText.textContent = consequence;
+                                resultText.innerHTML = consequence;
+                                resultText.innerText = consequence;
+                            }
+                        }, 100);
+                        
+                        // Additional mobile-specific timeout for stubborn browsers
+                        if (isMobileDevice) {
+                            setTimeout(() => {
+                                console.log('Mobile timeout check - forcing result display...');
+                                resultText.textContent = consequence;
+                                resultText.innerHTML = consequence;
+                                resultText.innerText = consequence;
+                                
+                                // Force one more reflow
+                                resultText.offsetHeight;
+                                resultText.style.display = 'none';
+                                resultText.offsetHeight;
+                                resultText.style.display = '';
+                                
+                                console.log('Final result text content:', resultText.textContent);
+                            }, 500);
+                            
+                            // Additional aggressive timeout for very stubborn mobile browsers
+                            setTimeout(() => {
+                                console.log('Final mobile timeout - direct DOM manipulation...');
+                                // Try direct DOM replacement
+                                const newTextNode = document.createTextNode(consequence);
+                                resultText.innerHTML = '';
+                                resultText.appendChild(newTextNode);
+                                
+                                // Force visibility
+                                resultText.style.opacity = '0';
+                                resultText.offsetHeight;
+                                resultText.style.opacity = '1';
+                                
+                                console.log('After direct DOM manipulation:', resultText.textContent);
+                            }, 1000);
+                        }
+                        
                         console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
                         
-                        // Reset styling after animation
-                        setTimeout(() => {
-                            resultText.classList.remove('consequence');
-                            resultDiv.classList.remove('winner');
-                            resultDiv.style.background = '';
-                            resultDiv.style.borderColor = '';
-                            resultDiv.style.boxShadow = '';
-                            resultText.style.color = '';
-                            resultText.style.textShadow = '';
-                        }, 1000);
+                        // Keep the result styling persistent (don't reset after animation)
+                        // The color will update dynamically when themes change
                         
                         // Enhanced celebration effects
                         setTimeout(() => {
