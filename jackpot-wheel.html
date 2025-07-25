@@ -879,7 +879,7 @@ h1, h2 {
     </div>
 
     <!-- Add audio elements -->
-    <audio id="introSound" preload="auto" src="wheel-intro.mp3" type="audio/mpeg"></audio>
+    <audio id="introSound" preload="auto" src="jackpot-intro.mp3" type="audio/mpeg"></audio>
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
     <audio id="winSound" preload="auto" src="win.mp3"></audio>
 
@@ -1573,9 +1573,43 @@ h1, h2 {
         // Theme button event listeners
         themeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
+                stopThemeCycle();
                 setTheme(btn.getAttribute('data-theme'));
             });
         });
+        
+        // === AUTOMATIC THEME CYCLING ===
+        const themes = ['light', 'dark', 'neon', 'cosmic', 'retro'];
+        let currentThemeIndex = 0;
+        let themeCycleInterval;
+        let isCycling = true;
+        
+        function startThemeCycle() {
+            if (themeCycleInterval) return;
+            
+            themeCycleInterval = setInterval(() => {
+                if (isCycling) {
+                    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+                    setTheme(themes[currentThemeIndex]);
+                }
+            }, 3000); // Change theme every 3 seconds
+        }
+        
+        function stopThemeCycle() {
+            isCycling = false;
+            if (themeCycleInterval) {
+                clearInterval(themeCycleInterval);
+                themeCycleInterval = null;
+            }
+        }
+        
+        // Start cycling if no theme was previously saved
+        if (!localStorage.getItem('theme')) {
+            startThemeCycle();
+        } else {
+            // If user had a saved theme, don't cycle automatically
+            isCycling = false;
+        }
         
 
 
