@@ -88,8 +88,11 @@
     --scrollbar-thumb: #888;
     --scrollbar-thumb-hover: #555;
     --primary-color: #e74c3c;
+    --primary-color-rgb: 231, 76, 60;
     --secondary-color: #8e44ad;
+    --secondary-color-rgb: 142, 68, 173;
     --accent-color: #c0392b;
+    --accent-color-rgb: 192, 57, 43;
 }
 
 [data-theme="dark"] {
@@ -105,8 +108,11 @@
     --scrollbar-thumb: #666;
     --scrollbar-thumb-hover: #888;
     --primary-color: #e74c3c;
+    --primary-color-rgb: 231, 76, 60;
     --secondary-color: #9b59b6;
+    --secondary-color-rgb: 155, 89, 182;
     --accent-color: #c0392b;
+    --accent-color-rgb: 192, 57, 43;
 }
 
 [data-theme="spooky"] {
@@ -122,8 +128,11 @@
     --scrollbar-thumb: #8b0000;
     --scrollbar-thumb-hover: #a00000;
     --primary-color: #ff4444;
+    --primary-color-rgb: 255, 68, 68;
     --secondary-color: #8b0000;
+    --secondary-color-rgb: 139, 0, 0;
     --accent-color: #ff0000;
+    --accent-color-rgb: 255, 0, 0;
 }
 
 [data-theme="gothic"] {
@@ -139,8 +148,11 @@
     --scrollbar-thumb: #5d2d5d;
     --scrollbar-thumb-hover: #6d3d6d;
     --primary-color: #8e44ad;
+    --primary-color-rgb: 142, 68, 173;
     --secondary-color: #663399;
+    --secondary-color-rgb: 102, 51, 153;
     --accent-color: #4a235a;
+    --accent-color-rgb: 74, 35, 90;
 }
 
 [data-theme="inferno"] {
@@ -156,8 +168,11 @@
     --scrollbar-thumb: #8b4513;
     --scrollbar-thumb-hover: #a0522d;
     --primary-color: #ff6b35;
+    --primary-color-rgb: 255, 107, 53;
     --secondary-color: #ff8c42;
+    --secondary-color-rgb: 255, 140, 66;
     --accent-color: #d84315;
+    --accent-color-rgb: 216, 67, 21;
 }
 
 /* Particle Canvas */
@@ -453,36 +468,147 @@ h1, h2 {
 }
 
 #result {
-    background-color: var(--list-bg);
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
     text-align: center;
-    min-width: 300px;
+    background: linear-gradient(135deg, var(--container-bg), var(--list-bg));
+    padding: 25px 20px;
+    border-radius: 20px;
+    border: 3px solid var(--border-color);
+    margin-top: 20px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+#result::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+#result:hover::before {
+    left: 100%;
+}
+
+#result.winner {
+    animation: winnerPulse 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: var(--accent-color);
+    box-shadow: 
+        0 0 30px rgba(var(--primary-color-rgb, 231, 76, 60), 0.4),
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+
+#result h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.8;
     transition: all 0.3s ease;
+}
+
+#result.winner h2 {
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #resultText {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 2.2em;
+    font-weight: 800;
     color: var(--text-color);
-    transition: all 0.3s ease;
+    min-height: 1.5em;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #resultText.consequence {
-    animation: dramaticPulse 0.8s ease-out;
-    color: var(--primary-color);
-    font-size: 24px;
+    animation: winnerText 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    color: #ffffff;
+    text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 [data-theme="spooky"] #resultText.consequence {
-    text-shadow: 0 0 15px var(--primary-color);
-    animation: dramaticPulse 0.8s ease-out, flicker 1s ease-in-out infinite alternate;
+    text-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 0 15px var(--primary-color);
+    animation: winnerText 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), flicker 1s ease-in-out infinite alternate;
 }
 
 [data-theme="gothic"] #resultText.consequence, [data-theme="inferno"] #resultText.consequence {
-    text-shadow: 0 0 15px var(--primary-color);
-    animation: dramaticPulse 0.8s ease-out, ominousGlow 1s ease-in-out infinite alternate;
+    text-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 0 15px var(--primary-color);
+    animation: winnerText 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), ominousGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes winnerPulse {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    25% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 40px rgba(var(--primary-color-rgb, 231, 76, 60), 0.6);
+    }
+    50% { 
+        transform: scale(1.02);
+        box-shadow: 0 0 50px rgba(var(--primary-color-rgb, 231, 76, 60), 0.8);
+    }
+    75% { 
+        transform: scale(1.08);
+        box-shadow: 0 0 60px rgba(var(--primary-color-rgb, 231, 76, 60), 0.6);
+    }
+    100% { 
+        transform: scale(1.02);
+        box-shadow: 0 0 30px rgba(var(--primary-color-rgb, 231, 76, 60), 0.4);
+    }
+}
+
+@keyframes winnerText {
+    0% { 
+        transform: scale(1);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    25% { 
+        transform: scale(1.2);
+        text-shadow: 0 0 30px rgba(255, 255, 255, 1);
+    }
+    50% { 
+        transform: scale(1.15);
+        text-shadow: 0 0 40px rgba(255, 255, 255, 1);
+    }
+    75% { 
+        transform: scale(1.25);
+        text-shadow: 0 0 50px rgba(255, 255, 255, 1);
+    }
+    100% { 
+        transform: scale(1.1);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    }
 }
 
 /* Options list styling */
@@ -912,7 +1038,7 @@ h1, h2 {
     </div>
 
     <!-- Audio elements -->
-    <audio id="introSound" preload="auto" src="wheel-intro.mp3" type="audio/mpeg"></audio>
+    <audio id="introSound" preload="auto" src="consequences-intro.mp3" type="audio/mpeg"></audio>
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
     <audio id="consequenceSound" preload="auto" src="consequence.mp3" type="audio/mpeg"></audio>
 
@@ -1156,6 +1282,20 @@ h1, h2 {
             function getCurrentColors() {
                 const theme = document.documentElement.getAttribute('data-theme') || 'light';
                 return colorSchemes[theme] || colorSchemes.light;
+            }
+            
+            function adjustBrightness(hex, percent) {
+                const num = parseInt(hex.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) + amt;
+                const G = (num >> 8 & 0x00FF) + amt;
+                const B = (num & 0x0000FF) + amt;
+                return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+            }
+            
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
             }
             
             function startTicking() {
@@ -1462,12 +1602,37 @@ h1, h2 {
                         updateStatistics();
                         updateHistory(consequence);
                         
-                        // Display result with dramatic effects
+                        // Display result with dramatic effects and matching wheel slice color
                         console.log('Setting result text to:', consequence);
+                        
+                        // Get the winning color and apply it to the result
+                        const colors = getCurrentColors();
+                        const winningColor = colors[winningIndex % colors.length];
+                        const resultDiv = document.getElementById('result');
+                        
+                        // Set the result background to match the winning wheel slice
+                        resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
+                        resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
+                        resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                        
+                        resultDiv.classList.add('winner');
                         resultText.textContent = consequence;
                         resultText.classList.add('consequence');
+                        resultText.style.color = '#ffffff';
+                        resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
+                        
                         console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
-                        setTimeout(() => resultText.classList.remove('consequence'), 1500);
+                        
+                        // Reset styling after animation
+                        setTimeout(() => {
+                            resultText.classList.remove('consequence');
+                            resultDiv.classList.remove('winner');
+                            resultDiv.style.background = '';
+                            resultDiv.style.borderColor = '';
+                            resultDiv.style.boxShadow = '';
+                            resultText.style.color = '';
+                            resultText.style.textShadow = '';
+                        }, 2000);
                         
                         // Dramatic celebration effects
                         setTimeout(() => {
