@@ -1432,6 +1432,9 @@ h1, h2 {
                     resultDiv.style.borderColor = borderColor;
                     resultDiv.style.boxShadow = boxShadow;
                     
+                    // Check if mobile device
+                    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    
                     // Force mobile browsers to apply the background
                     if (isMobileDevice) {
                         console.log('Mobile detected, forcing background application...');
@@ -1460,7 +1463,6 @@ h1, h2 {
                     resultText.style.display = '';
                     
                     // Additional mobile-specific force updates
-                    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                     if (isMobileDevice) {
                         console.log('Mobile detected, applying additional force updates...');
                         // Force multiple updates to ensure mobile browsers pick up the change
@@ -1507,6 +1509,22 @@ h1, h2 {
                             
                             console.log('Final result text content:', resultText.textContent);
                         }, 500);
+                        
+                        // Additional aggressive timeout for very stubborn mobile browsers
+                        setTimeout(() => {
+                            console.log('Final mobile timeout - direct DOM manipulation...');
+                            // Try direct DOM replacement
+                            const newTextNode = document.createTextNode(winner);
+                            resultText.innerHTML = '';
+                            resultText.appendChild(newTextNode);
+                            
+                            // Force visibility
+                            resultText.style.opacity = '0';
+                            resultText.offsetHeight;
+                            resultText.style.opacity = '1';
+                            
+                            console.log('After direct DOM manipulation:', resultText.textContent);
+                        }, 1000);
                     }
                     
                     console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
