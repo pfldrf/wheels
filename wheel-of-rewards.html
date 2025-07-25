@@ -365,28 +365,30 @@ h1, h2 {
 
 #spinBtn {
     position: absolute;
-    bottom: -60px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 30px;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     color: white;
-    border: none;
-    border-radius: 25px;
+    border: 5px solid var(--border-color);
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 5;
 }
 
 #spinBtn:hover {
-    transform: translateX(-50%) translateY(-2px);
+    transform: translate(-50%, -50%) scale(1.1);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 #spinBtn:active {
-    transform: translateX(-50%) translateY(0px);
+    transform: translate(-50%, -50%) scale(0.95);
 }
 
 #spinBtn.spinning {
@@ -732,9 +734,9 @@ h1, h2 {
     }
     
     #spinBtn {
-        padding: 12px 24px;
+        width: 60px;
+        height: 60px;
         font-size: 16px;
-        bottom: -50px;
     }
     
     .controls {
@@ -844,7 +846,7 @@ h1, h2 {
     </div>
 
     <!-- Audio elements -->
-    <audio id="introSound" preload="auto" src="wheel-intro.mp3" type="audio/mpeg"></audio>
+    <audio id="introSound" preload="auto" src="reward-intro.mp3" type="audio/mpeg"></audio>
     <audio id="tickSound" preload="auto" src="tick.mp3"></audio>
     <audio id="winSound" preload="auto" src="win.mp3" type="audio/mpeg"></audio>
 
