@@ -1332,7 +1332,45 @@ h1, h2 {
 
             isSpinning = true;
             spinBtn.disabled = true;
+            
+            // Reset result area completely for new spin
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            
+            // Clear any previous result styling
+            resultDiv.classList.remove('winner');
+            resultText.classList.remove('winner');
+            resultDiv.style.background = '';
+            resultDiv.style.borderColor = '';
+            resultDiv.style.boxShadow = '';
+            resultText.style.color = '';
+            resultText.style.textShadow = '';
+            resultText.style.background = '';
+            resultText.style.border = '';
+            
+            // Force mobile browsers to clear the styling
+            const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobileDevice) {
+                console.log('Mobile detected, forcing result reset...');
+                resultDiv.style.backgroundImage = '';
+                resultDiv.style.backgroundSize = '';
+                resultDiv.style.backgroundRepeat = '';
+                resultDiv.style.backgroundPosition = '';
+                resultDiv.style.transform = '';
+                resultText.style.transform = '';
+                resultText.style.visibility = '';
+                resultText.style.opacity = '';
+                
+                // Force reflow to ensure reset is applied
+                resultDiv.offsetHeight;
+                resultText.offsetHeight;
+            }
+            
+            // Set spinning text
             resultText.textContent = 'Spinning...';
+            resultText.innerHTML = 'Spinning...';
+            resultText.innerText = 'Spinning...';
+            
             showError("");
 
             startTicking();
