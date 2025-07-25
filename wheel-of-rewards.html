@@ -870,6 +870,12 @@ h1, h2 {
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded - Starting wheel initialization...');
+            
+            // === DYNAMIC RESULT COLOR MANAGEMENT ===
+            let lastWinningIndex = -1;
+            let lastWinningColor = null;
+            
             // === PARTICLE SYSTEM ===
             class ParticleSystem {
                 constructor() {
@@ -1675,11 +1681,19 @@ h1, h2 {
             
             // Loading screen management with interactive ready state
             function showReadyState() {
+                console.log('showReadyState called...');
                 console.log('Audio loaded, showing ready state...');
                 const loadingOverlay = document.getElementById('loadingOverlay');
                 const spinner = document.querySelector('.loading-spinner');
                 const loadingText = document.getElementById('loadingText');
                 const loadingSubtext = document.getElementById('loadingSubtext');
+                
+                console.log('Loading elements found:', {
+                    overlay: loadingOverlay,
+                    spinner: spinner,
+                    text: loadingText,
+                    subtext: loadingSubtext
+                });
                 
                 // Change to ready state
                 loadingOverlay.classList.add('loading-ready');
@@ -1689,6 +1703,7 @@ h1, h2 {
                 
                 // Add click handler to start everything
                 loadingOverlay.addEventListener('click', startWheelExperience);
+                console.log('Ready state applied successfully');
             }
             
             // Start the full wheel experience with music
@@ -1706,7 +1721,9 @@ h1, h2 {
             }
             
             // Show ready state after 1.5 seconds
+            console.log('Setting up ready state timer...');
             setTimeout(() => {
+                console.log('Timer fired, calling showReadyState...');
                 showReadyState();
             }, 1500);
             
@@ -1758,6 +1775,8 @@ h1, h2 {
             
             introSound.addEventListener('error', (e) => {
                 console.error('Audio loading error:', e);
+                console.log('Audio failed to load, showing ready state anyway...');
+                showReadyState();
             });
             
             // === COLOR HELPER FUNCTIONS ===
@@ -1781,10 +1800,6 @@ h1, h2 {
                 } : null;
             }
             
-            // === DYNAMIC RESULT COLOR MANAGEMENT ===
-            let lastWinningIndex = -1;
-            let lastWinningColor = null;
-            
             function updateResultColor() {
                 if (lastWinningIndex >= 0 && lastWinningColor) {
                     const resultDiv = document.getElementById('result');
@@ -1805,9 +1820,11 @@ h1, h2 {
             }
             
             // === INITIAL SETUP ===
+            console.log('Running initial setup...');
             updateOptionsList();
             resizeCanvas();
             drawWheel();
+            console.log('Initial setup complete!');
         });
     </script>
     </div> <!-- End main content -->
