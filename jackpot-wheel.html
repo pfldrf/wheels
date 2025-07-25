@@ -1531,30 +1531,38 @@ h1, h2 {
             showReadyState();
         }, 1500);
         
-        // Function to play intro music
-        function playIntroMusic() {
-            if (introMusicPlayed) {
-                console.log('Intro music already played, skipping...');
-                return; // Prevent multiple plays
+                    // Function to play intro music
+            function playIntroMusic() {
+                if (introMusicPlayed) {
+                    console.log('Intro music already played, skipping...');
+                    return; // Prevent multiple plays
+                }
+                
+                console.log('Playing intro music...');
+                console.log('Audio element:', introSound);
+                console.log('Audio src:', introSound.src);
+                console.log('Audio readyState:', introSound.readyState);
+                console.log('Audio networkState:', introSound.networkState);
+                console.log('User agent:', navigator.userAgent);
+                
+                introMusicPlayed = true;
+                introSound.currentTime = 0;
+                
+                const playPromise = introSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Intro music started successfully!');
+                    }).catch((error) => {
+                        console.log('Music play failed:', error);
+                        console.log('Error name:', error.name);
+                        console.log('Error message:', error.message);
+                        // Reset flag to allow retry
+                        introMusicPlayed = false;
+                    });
+                } else {
+                    console.log('No play promise returned');
+                }
             }
-            
-            console.log('Playing intro music...');
-            introMusicPlayed = true;
-            introSound.currentTime = 0;
-            
-            const playPromise = introSound.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    console.log('Intro music started successfully!');
-                }).catch((error) => {
-                    console.log('Music play failed:', error);
-                    // Reset flag to allow retry
-                    introMusicPlayed = false;
-                });
-            } else {
-                console.log('No play promise returned');
-            }
-        }
 
         // --- Initial Setup ---
         updateOptionsList();
@@ -1599,17 +1607,33 @@ h1, h2 {
         let isCycling = false;
         
         function startThemeCycle() {
-            if (themeCycleInterval) return;
+            if (themeCycleInterval) {
+                console.log('Theme cycle already running, clearing...');
+                clearInterval(themeCycleInterval);
+            }
             
             console.log('Starting theme cycle...');
+            console.log('Current theme index:', currentThemeIndex);
+            console.log('Available themes:', themes);
             isCycling = true;
+            
+            // Start immediately with first theme
+            setCyclingTheme(themes[currentThemeIndex]);
+            
             themeCycleInterval = setInterval(() => {
+                console.log('Interval triggered, isCycling:', isCycling);
                 if (isCycling) {
                     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-                    console.log('Cycling to theme:', themes[currentThemeIndex]);
+                    console.log('Cycling to theme:', themes[currentThemeIndex], 'at index:', currentThemeIndex);
                     setCyclingTheme(themes[currentThemeIndex]);
+                } else {
+                    console.log('Cycling stopped, clearing interval');
+                    clearInterval(themeCycleInterval);
+                    themeCycleInterval = null;
                 }
             }, 800); // Change theme every 0.8 seconds
+            
+            console.log('Theme cycle interval set:', themeCycleInterval);
         }
         
         function stopThemeCycle() {
@@ -1660,7 +1684,20 @@ h1, h2 {
         // Initialize theme - default to cycling
         const savedTheme = localStorage.getItem('theme') || 'cycling';
         console.log('Initializing with theme:', savedTheme);
+        console.log('About to call setTheme with:', savedTheme);
         setTheme(savedTheme);
+        console.log('setTheme called, checking if cycling should be active...');
+        
+        // Manual trigger for testing (press 'C' key)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'c' || e.key === 'C') {
+                console.log('Manual cycling trigger pressed!');
+                localStorage.removeItem('theme');
+                currentThemeIndex = 0;
+                isCycling = true;
+                startThemeCycle();
+            }
+        });
         
 
 

@@ -1720,6 +1720,12 @@ h1, h2 {
                 }
                 
                 console.log('Playing intro music...');
+                console.log('Audio element:', introSound);
+                console.log('Audio src:', introSound.src);
+                console.log('Audio readyState:', introSound.readyState);
+                console.log('Audio networkState:', introSound.networkState);
+                console.log('User agent:', navigator.userAgent);
+                
                 introMusicPlayed = true;
                 introSound.currentTime = 0;
                 
@@ -1729,6 +1735,8 @@ h1, h2 {
                         console.log('Intro music started successfully!');
                     }).catch((error) => {
                         console.log('Music play failed:', error);
+                        console.log('Error name:', error.name);
+                        console.log('Error message:', error.message);
                         // Reset flag to allow retry
                         introMusicPlayed = false;
                     });
