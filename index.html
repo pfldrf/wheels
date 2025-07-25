@@ -26,8 +26,9 @@
         
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -37,11 +38,11 @@
         }
         
         h1 {
-            color: #333;
+            color: #ffffff;
             margin-bottom: 40px;
             font-size: 2.5em;
             font-weight: 800;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .wheel-links {
