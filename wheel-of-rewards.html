@@ -1422,9 +1422,11 @@ h1, h2 {
             // === THEME SYSTEM ===
             const themeButtons = document.querySelectorAll('.theme-btn');
             
-            function setTheme(themeName) {
+            function setTheme(themeName, saveToStorage = true) {
                 document.documentElement.setAttribute('data-theme', themeName);
-                localStorage.setItem('theme', themeName);
+                if (saveToStorage) {
+                    localStorage.setItem('theme', themeName);
+                }
                 
                 // Update active theme button
                 themeButtons.forEach(btn => btn.classList.remove('active'));
@@ -1435,8 +1437,12 @@ h1, h2 {
             }
             
             // Initialize theme
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            setTheme(savedTheme);
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                setTheme('light', false); // Don't save to storage initially
+            }
             
             // Theme button event listeners
             themeButtons.forEach(btn => {
@@ -1472,7 +1478,7 @@ h1, h2 {
             }
             
             // Start cycling if no theme was previously saved
-            if (!localStorage.getItem('theme')) {
+            if (!savedTheme) {
                 startThemeCycle();
             } else {
                 // If user had a saved theme, don't cycle automatically
