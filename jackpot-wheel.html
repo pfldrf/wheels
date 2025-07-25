@@ -1608,7 +1608,7 @@ h1, h2 {
                 if (isCycling) {
                     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
                     console.log('Cycling to theme:', themes[currentThemeIndex]);
-                    setTheme(themes[currentThemeIndex], false);
+                    setCyclingTheme(themes[currentThemeIndex]);
                 }
             }, 800); // Change theme every 0.8 seconds
         }
@@ -1641,6 +1641,19 @@ h1, h2 {
                 originalSetTheme(themeName, saveToStorage);
             }
         };
+        
+        // Separate function for cycling themes (doesn't stop cycling)
+        function setCyclingTheme(themeName) {
+            console.log('Setting cycling theme to:', themeName);
+            document.documentElement.setAttribute('data-theme', themeName);
+            
+            // Update active theme button (but keep cycling active)
+            themeButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector('[data-theme="cycling"]').classList.add('active');
+            
+            // Redraw wheel with new colors
+            drawWheel(currentRotation);
+        }
         
         // Initialize theme - default to cycling
         const savedTheme = localStorage.getItem('theme') || 'cycling';
