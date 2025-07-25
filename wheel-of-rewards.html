@@ -1600,10 +1600,27 @@ h1, h2 {
         
         // Initialize theme - default to cycling on mobile, cycling on desktop
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const savedTheme = localStorage.getItem('theme') || 'cycling';
-        console.log('Initializing with theme:', savedTheme);
+        let savedTheme = localStorage.getItem('theme');
+        
+        console.log('=== REWARDS THEME INITIALIZATION DEBUG ===');
         console.log('Is mobile:', isMobile);
-        console.log('About to call setTheme with:', savedTheme);
+        console.log('User agent:', navigator.userAgent);
+        console.log('localStorage theme value:', savedTheme);
+        
+        // On mobile, always default to cycling theme regardless of saved theme
+        if (isMobile) {
+            savedTheme = 'cycling';
+            console.log('Mobile detected, forcing cycling theme as default (overriding localStorage)');
+            // Clear any existing theme from localStorage to ensure cycling is applied
+            localStorage.removeItem('theme');
+        } else if (!savedTheme) {
+            savedTheme = 'cycling';  // Default to cycling for rewards on desktop too
+            console.log('Desktop detected, no saved theme, using cycling as default');
+        } else {
+            console.log('Desktop detected, using saved theme:', savedTheme);
+        }
+        
+        console.log('Final theme to be applied:', savedTheme);
         setTheme(savedTheme);
         console.log('setTheme called, checking if cycling should be active...');
         
