@@ -1663,7 +1663,7 @@ h1, h2 {
                         // Set the result background to match the winning wheel slice
                         const backgroundGradient = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
                         const borderColor = adjustBrightness(winningColor, 20);
-                        const boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                        const boxShadow = `0 0 30px rgba(${hexToRgb(winningColor).r}, ${hexToRgb(winningColor).g}, ${hexToRgb(winningColor).b}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
                         
                         console.log('Setting result styling:', {
                             backgroundGradient,
