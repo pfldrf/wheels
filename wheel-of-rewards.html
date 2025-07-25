@@ -1598,9 +1598,11 @@ h1, h2 {
             console.log('Theme applied:', themeName, 'Data theme attribute:', document.documentElement.getAttribute('data-theme'));
         }
         
-        // Initialize theme - default to cycling
+        // Initialize theme - default to cycling on mobile, cycling on desktop
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const savedTheme = localStorage.getItem('theme') || 'cycling';
         console.log('Initializing with theme:', savedTheme);
+        console.log('Is mobile:', isMobile);
         console.log('About to call setTheme with:', savedTheme);
         setTheme(savedTheme);
         console.log('setTheme called, checking if cycling should be active...');
