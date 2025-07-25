@@ -1401,6 +1401,17 @@ h1, h2 {
                     const resultText = document.getElementById('resultText');
                     const winningColor = colors[winningIndex % colors.length];
                     
+                    console.log('Setting result text to:', winner);
+                    console.log('User agent:', navigator.userAgent);
+                    console.log('Is mobile:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+                    
+                    console.log('Result elements found:', {
+                        resultDiv: resultDiv,
+                        resultText: resultText,
+                        winner: winner,
+                        winningColor: winningColor
+                    });
+                    
                     // Store the winning index and color for dynamic updates
                     lastWinningIndex = winningIndex;
                     lastWinningColor = winningColor;
@@ -1415,6 +1426,26 @@ h1, h2 {
                     resultText.textContent = winner;
                     resultText.style.color = '#ffffff';
                     resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
+                    
+                    // Force a reflow to ensure the text update is visible on mobile
+                    resultText.offsetHeight;
+                    resultText.style.display = 'none';
+                    resultText.offsetHeight;
+                    resultText.style.display = '';
+                    
+                    // Double-check the text content is set correctly
+                    setTimeout(() => {
+                        if (resultText.textContent !== winner) {
+                            console.log('Text content mismatch detected, fixing...');
+                            resultText.textContent = winner;
+                            resultText.innerHTML = winner;
+                        }
+                    }, 100);
+                    
+                    console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
+                    console.log('Result text content after assignment:', resultText.textContent);
+                    console.log('Result div classes:', resultDiv.className);
+                    console.log('Result text classes:', resultText.className);
 
                     // Enhanced confetti celebration
                     enhancedConfetti();
