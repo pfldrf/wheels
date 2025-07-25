@@ -1547,32 +1547,32 @@ h1, h2 {
                 spinBtn.classList.add('spinning');
                 spinBtn.textContent = 'SPINNING...';
                 
-                const spinDuration = 3500 + Math.random() * 2000; // 3.5-5.5 seconds
-                const totalRotation = 1800 + Math.random() * 1440; // 5-9 full rotations
+                const spinDuration = 3000 + Math.random() * 2000; // 3-5 seconds
+                const totalRotation = 1440 + Math.random() * 1440; // 4-8 full rotations
                 const startRotation = currentRotation;
                 const endRotation = startRotation + totalRotation;
                 
                 let startTime = null;
                 startTicking();
                 
-                // Create ominous particle effects during spin
+                // Create particle effects during spin
                 const particleInterval = setInterval(() => {
                     const rect = canvas.getBoundingClientRect();
                     particles.createOminousSparkles(
-                        rect.left + rect.width / 2 + (Math.random() - 0.5) * 120,
-                        rect.top + rect.height / 2 + (Math.random() - 0.5) * 120,
-                        4
+                        rect.left + rect.width / 2 + (Math.random() - 0.5) * 100,
+                        rect.top + rect.height / 2 + (Math.random() - 0.5) * 100,
+                        3
                     );
                     particles.start();
-                }, 250);
+                }, 200);
                 
                 function animate(timestamp) {
                     if (!startTime) startTime = timestamp;
                     const elapsed = timestamp - startTime;
                     const progress = Math.min(elapsed / spinDuration, 1);
                     
-                    // More dramatic easing for consequences
-                    const easeOut = 1 - Math.pow(1 - progress, 4);
+                    // Easing function for realistic deceleration
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
                     currentRotation = startRotation + (totalRotation * easeOut);
                     
                     drawWheel(currentRotation);
@@ -1604,39 +1604,14 @@ h1, h2 {
                         updateStatistics();
                         updateHistory(consequence);
                         
-                        // Display result with dramatic effects and matching wheel slice color
+                        // Display result with enhanced effects
                         console.log('Setting result text to:', consequence);
-                        
-                        // Get the winning color and apply it to the result
-                        const colors = getCurrentColors();
-                        const winningColor = colors[winningIndex % colors.length];
-                        const resultDiv = document.getElementById('result');
-                        
-                        // Set the result background to match the winning wheel slice
-                        resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
-                        resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
-                        resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
-                        
-                        resultDiv.classList.add('winner');
                         resultText.textContent = consequence;
                         resultText.classList.add('consequence');
-                        resultText.style.color = '#ffffff';
-                        resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
-                        
                         console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
+                        setTimeout(() => resultText.classList.remove('consequence'), 1000);
                         
-                        // Reset styling after animation
-                        setTimeout(() => {
-                            resultText.classList.remove('consequence');
-                            resultDiv.classList.remove('winner');
-                            resultDiv.style.background = '';
-                            resultDiv.style.borderColor = '';
-                            resultDiv.style.boxShadow = '';
-                            resultText.style.color = '';
-                            resultText.style.textShadow = '';
-                        }, 2000);
-                        
-                        // Dramatic celebration effects
+                        // Enhanced celebration effects
                         setTimeout(() => {
                             dramaticConfetti();
                             // Temporarily duck music for consequence sound
@@ -1656,7 +1631,7 @@ h1, h2 {
                             );
                             particles.createDarkLightning();
                             particles.start();
-                        }, 600);
+                        }, 500);
                         
                         // Reset button
                         isSpinning = false;
