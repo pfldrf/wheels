@@ -1604,12 +1604,37 @@ h1, h2 {
                         updateStatistics();
                         updateHistory(consequence);
                         
-                        // Display result with enhanced effects
+                        // Display result with enhanced effects and matching wheel slice color
                         console.log('Setting result text to:', consequence);
+                        
+                        // Get the winning color and apply it to the result
+                        const colors = getCurrentColors();
+                        const winningColor = colors[winningIndex % colors.length];
+                        const resultDiv = document.getElementById('result');
+                        
+                        // Set the result background to match the winning wheel slice
+                        resultDiv.style.background = `linear-gradient(135deg, ${winningColor}, ${adjustBrightness(winningColor, -20)})`;
+                        resultDiv.style.borderColor = adjustBrightness(winningColor, 20);
+                        resultDiv.style.boxShadow = `0 0 30px rgba(${hexToRgb(winningColor)}, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+                        
+                        resultDiv.classList.add('winner');
                         resultText.textContent = consequence;
                         resultText.classList.add('consequence');
+                        resultText.style.color = '#ffffff';
+                        resultText.style.textShadow = `0 0 20px rgba(255, 255, 255, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3)`;
+                        
                         console.log('Result element after setting:', resultText, 'Content:', resultText.textContent);
-                        setTimeout(() => resultText.classList.remove('consequence'), 1000);
+                        
+                        // Reset styling after animation
+                        setTimeout(() => {
+                            resultText.classList.remove('consequence');
+                            resultDiv.classList.remove('winner');
+                            resultDiv.style.background = '';
+                            resultDiv.style.borderColor = '';
+                            resultDiv.style.boxShadow = '';
+                            resultText.style.color = '';
+                            resultText.style.textShadow = '';
+                        }, 1000);
                         
                         // Enhanced celebration effects
                         setTimeout(() => {
