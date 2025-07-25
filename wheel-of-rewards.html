@@ -208,7 +208,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
     color: var(--text-color);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Cosmic theme background */
@@ -246,7 +246,7 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     max-width: 1000px;
     width: 100%;
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 }
 
@@ -317,14 +317,14 @@ body {
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     align-self: stretch;
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 h1, h2 {
     color: var(--text-color);
     margin-bottom: 15px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="neon"] h1, [data-theme="neon"] h2 {
@@ -363,7 +363,7 @@ h1, h2 {
 #wheelCanvas {
     border-radius: 50%;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     display: block;
     max-width: 100%;
     height: auto;
@@ -417,14 +417,14 @@ h1, h2 {
     margin-top: 20px;
     text-align: center;
     min-width: 300px;
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #resultText {
     font-size: 18px;
     font-weight: bold;
     color: var(--text-color);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #resultText.winner {
@@ -452,7 +452,7 @@ h1, h2 {
     border-radius: 5px;
     background-color: var(--input-bg);
     color: var(--text-color);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="neon"] .add-option input {
@@ -499,7 +499,7 @@ h1, h2 {
     border: 2px solid var(--border-color);
     border-radius: 5px;
     background-color: var(--list-bg);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #optionsList li {
@@ -508,7 +508,7 @@ h1, h2 {
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid var(--border-color);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #optionsList li:hover {
@@ -522,7 +522,7 @@ h1, h2 {
 #optionsList li span {
     flex: 1;
     color: var(--text-color);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #optionsList li button {
@@ -549,7 +549,7 @@ h1, h2 {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .timer-display {
@@ -558,7 +558,7 @@ h1, h2 {
     color: var(--primary-color);
     margin-bottom: 15px;
     font-family: 'Courier New', monospace;
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="neon"] .timer-display {
@@ -1468,17 +1468,33 @@ h1, h2 {
         let isCycling = false;
         
         function startThemeCycle() {
-            if (themeCycleInterval) return;
+            if (themeCycleInterval) {
+                console.log('Theme cycle already running, clearing...');
+                clearInterval(themeCycleInterval);
+            }
             
             console.log('Starting theme cycle...');
+            console.log('Current theme index:', currentThemeIndex);
+            console.log('Available themes:', themes);
             isCycling = true;
+            
+            // Start immediately with first theme
+            setCyclingTheme(themes[currentThemeIndex]);
+            
             themeCycleInterval = setInterval(() => {
+                console.log('Interval triggered, isCycling:', isCycling);
                 if (isCycling) {
                     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-                    console.log('Cycling to theme:', themes[currentThemeIndex]);
+                    console.log('Cycling to theme:', themes[currentThemeIndex], 'at index:', currentThemeIndex);
                     setCyclingTheme(themes[currentThemeIndex]);
+                } else {
+                    console.log('Cycling stopped, clearing interval');
+                    clearInterval(themeCycleInterval);
+                    themeCycleInterval = null;
                 }
             }, 800); // Change theme every 0.8 seconds
+            
+            console.log('Theme cycle interval set:', themeCycleInterval);
         }
         
         function stopThemeCycle() {
@@ -1517,16 +1533,36 @@ h1, h2 {
             
             // Update active theme button (but keep cycling active)
             themeButtons.forEach(btn => btn.classList.remove('active'));
-            document.querySelector('[data-theme="cycling"]').classList.add('active');
+            const cyclingBtn = document.querySelector('[data-theme="cycling"]');
+            if (cyclingBtn) {
+                cyclingBtn.classList.add('active');
+            } else {
+                console.error('Cycling button not found!');
+            }
             
             // Redraw wheel with new colors
             drawWheel(currentRotation);
+            
+            console.log('Theme applied:', themeName, 'Data theme attribute:', document.documentElement.getAttribute('data-theme'));
         }
         
         // Initialize theme - default to cycling
         const savedTheme = localStorage.getItem('theme') || 'cycling';
         console.log('Initializing with theme:', savedTheme);
+        console.log('About to call setTheme with:', savedTheme);
         setTheme(savedTheme);
+        console.log('setTheme called, checking if cycling should be active...');
+        
+        // Manual trigger for testing (press 'C' key)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'c' || e.key === 'C') {
+                console.log('Manual cycling trigger pressed!');
+                localStorage.removeItem('theme');
+                currentThemeIndex = 0;
+                isCycling = true;
+                startThemeCycle();
+            }
+        });
             
             // === EVENT LISTENERS ===
             spinBtn.addEventListener('click', spin);
